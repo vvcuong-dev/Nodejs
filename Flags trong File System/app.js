@@ -67,6 +67,24 @@
 
 const fs = require('fs');
 
-fs.writeFileSync('./test12.txt', "new content", {
-    flag: 'w'
+// fs.writeFileSync('./test12.txt', "new content", {
+//     flag: 'w'
+// });
+
+
+/**
+ * 3. Các Flag dành cho việc ghi thêm (Appending)
+ *  - 'a': mở file để ghi thêm (append)
+ *      - dữ liệu mới sẽ được thêm vào cuối file
+ *      - nếu file chưa tồn tại. Một file mới sẽ được tạo
+ *  - 'ax': tương tự như 'a' nhưng sẽ thất bại nếu file đã tồn tại
+ *  - 'a+': mở file để đọc và ghi thêm
+ *      - dữ liệu mới được nối vào cuối file
+ *      - nếu file chưa tồn tại: tạo file mới
+ *  - 'ax+': tương tự như 'a+' nhưng sẽ thất bại nếu đường dẫn đã tồn tại
+ * 
+ */
+
+fs.writeFileSync('./test12.txt', "Cuong Vu", {
+    flag: 'w+'
 });
