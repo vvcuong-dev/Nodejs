@@ -25,4 +25,24 @@
 const EventEmitter = require('events');
 const myEmitter = new EventEmitter();
 
-console.log(myEmitter);
+
+
+/**
+ * 3. Các thao tác cơ bản vs EventEmiiter
+ *  
+ *  a. Đăng ký sự kiện (.on() hoặc .addListener())
+ *  - Dùng để định nghĩa xem khi một sự kiện xảy ra thì sẽ làm gì. 
+ */
+
+
+myEmitter.on("xinchao", () => {
+     console.log("Mot su kien chao hoi vua dien ra")
+})
+
+/**
+ * b. Kích hoạt sự kiện (.emit())
+ * - dùng để phát tín hiệu thông báo sự kiện đã xảy ra
+ */
+
+myEmitter.emit("xinchao");
+// Kết quả: Mot su kien chao hoi vua dien ra"
