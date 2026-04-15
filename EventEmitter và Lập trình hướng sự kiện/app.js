@@ -35,14 +35,24 @@ const myEmitter = new EventEmitter();
  */
 
 
-myEmitter.on("xinchao", () => {
-     console.log("Mot su kien chao hoi vua dien ra")
-})
+// myEmitter.on("xinchao", () => {
+//      console.log("Mot su kien chao hoi vua dien ra")
+// })
 
 /**
  * b. Kích hoạt sự kiện (.emit())
  * - dùng để phát tín hiệu thông báo sự kiện đã xảy ra
  */
 
-myEmitter.emit("xinchao");
+// myEmitter.emit("xinchao");
 // Kết quả: Mot su kien chao hoi vua dien ra"
+
+/**
+ * C. truyền dữ liệu kèm theo sự kiện
+ */
+
+myEmitter.on('login', (username, time) => {
+    console.log(`${username} đã đăng nhập lúc ${time}`);
+})
+
+myEmitter.emit("login", "cuong vu", "10:99")
