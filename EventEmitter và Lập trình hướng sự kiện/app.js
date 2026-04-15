@@ -22,8 +22,8 @@
  * 
  */
 
-const EventEmitter = require('events');
-const myEmitter = new EventEmitter();
+// const EventEmitter = require('events');
+// const myEmitter = new EventEmitter();
 
 
 
@@ -62,11 +62,27 @@ const myEmitter = new EventEmitter();
  *  - Sự kiện này sau khi kích hoạt lần đầu sẽ tự động bị hủy bỏ
  */
 
-myEmitter.once("gift", () => {
-    console.log("Bạn đã nhận đc quà - chỉ 1 lần");
-})
+// myEmitter.once("gift", () => {
+//     console.log("Bạn đã nhận đc quà - chỉ 1 lần");
+// })
 
 
-myEmitter.emit("gift");
-myEmitter.emit("gift");
+// myEmitter.emit("gift");
+// myEmitter.emit("gift");
+
+/**
+ * 4. Ví dụ thực tế: Xây dựng hệ thống thông báo đơn hàng
+ */
+const eventEmitter = require("./utils/event");
+require('./utils/stock');
+require("./utils/email");
+
+// giả lập user đặt hàng
+const createOrder = () => {
+    // logic đặt hàng
+
+    eventEmitter.emit("newOrder", "Order123"); // phát sự kiện
+};
+
+createOrder();
 
