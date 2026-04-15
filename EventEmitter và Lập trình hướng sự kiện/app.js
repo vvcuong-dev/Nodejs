@@ -51,8 +51,22 @@ const myEmitter = new EventEmitter();
  * C. truyền dữ liệu kèm theo sự kiện
  */
 
-myEmitter.on('login', (username, time) => {
-    console.log(`${username} đã đăng nhập lúc ${time}`);
+// myEmitter.on('login', (username, time) => {
+//     console.log(`${username} đã đăng nhập lúc ${time}`);
+// })
+
+// myEmitter.emit("login", "cuong vu", "10:99")
+
+/**
+ * Đăng ký sự kiện chỉ chạy 1 lần (.once())
+ *  - Sự kiện này sau khi kích hoạt lần đầu sẽ tự động bị hủy bỏ
+ */
+
+myEmitter.once("gift", () => {
+    console.log("Bạn đã nhận đc quà - chỉ 1 lần");
 })
 
-myEmitter.emit("login", "cuong vu", "10:99")
+
+myEmitter.emit("gift");
+myEmitter.emit("gift");
+
