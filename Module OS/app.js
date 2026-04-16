@@ -14,10 +14,16 @@ const os = require("os");
  *    - trả về 1 mảng các đối tượng chứa thông tin chi tiết về từng phần (core) của CPU, bao gồm model, tốc độ và thông số thời gian
  */
 
-    const cpu = os.cpus();
-    console.log(`Số nhân CPU: ${cpu.length}`);
-    console.log(`Thông tin nhân đầu tiên: ${cpu[0].model}`);
+    // const cpu = os.cpus();
+    // console.log(`Số nhân CPU: ${cpu.length}`);
+    // console.log(`Thông tin nhân đầu tiên: ${cpu[0].model}`);
     
+    /**
+     * B. Bộ nhớ RAM (os.totalmem() và os.freemem())
+     *  - giúp bạn theo dõi dung lượng RAM của hệ thống tính bằng byte
+     */
+
+    console.log(os.freemem());
     
     
 
