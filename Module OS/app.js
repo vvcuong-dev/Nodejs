@@ -35,11 +35,17 @@ const os = require("os");
      *  - trả về số giây mà hệ thống đã chạy kể từ lần khởi động cuối cùng
      */
     
-       const uptimeSeconds = os.uptime();
-       const uptimeMinutes = uptimeSeconds / 60;
-       console.log(`Máy đã chạy được: ${uptimeMinutes.toFixed(0)} phút`);
+    //    const uptimeSeconds = os.uptime();
+    //    const uptimeMinutes = uptimeSeconds / 60;
+    //    console.log(`Máy đã chạy được: ${uptimeMinutes.toFixed(0)} phút`);
        
     
+    /**
+     * 3. Thông tin mạng: (os.networkInterface())
+     *  - hàm này trả về chi tiết các cổng mạng (IP Address, MAC address, ) đang hoạt động trên máy
+     */
+
+    console.log(os.networkInterfaces());
     
     
 
