@@ -23,7 +23,23 @@ const os = require("os");
      *  - giúp bạn theo dõi dung lượng RAM của hệ thống tính bằng byte
      */
 
-    console.log(os.freemem());
+    // console.log(os.freemem());
+
+    console.log(os.platform()); // lấy thông nền tảng (platform)
+    console.log(os.arch()); // lấy thông tin kiến trúc CPU
+    console.log(os.release()); // lấy phiên bản của OS
+    
+
+    /**
+     * c. thời gian máy đã hoạt động (os.uptime())
+     *  - trả về số giây mà hệ thống đã chạy kể từ lần khởi động cuối cùng
+     */
+    
+       const uptimeSeconds = os.uptime();
+       const uptimeMinutes = uptimeSeconds / 60;
+       console.log(`Máy đã chạy được: ${uptimeMinutes.toFixed(0)} phút`);
+       
+    
     
     
 
