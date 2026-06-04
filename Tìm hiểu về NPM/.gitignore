@@ -1,0 +1,24 @@
+# Bỏ qua file cụ thể
+node_modules/
+package-lock.json
+
+# Bỏ qua folder
+build/
+dist/
+
+# Bỏ qua file có pattern
+*.log
+*.tmp
+*.pem
+
+# Bỏ qua file trong folder cụ thể
+config/secrets.json
+env/.env
+
+# Bỏ qua tất cả .env files
+.env
+.env.*
+
+# Bỏ qua OS files
+.DS_Store
+Thumbs.db
