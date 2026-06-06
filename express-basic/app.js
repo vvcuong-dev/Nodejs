@@ -21,8 +21,9 @@ const timeCheck = (req, res, next) => {
 
 app.use(morgan('dev')); // Sử dụng morgan để ghi log chi tiết về các yêu cầu HTTP
 app.use(express.urlencoded({ extended: true })); 
-// đoạn này giúp phân tích dữ liệu từ form gửi lên dưới dạng URL-encoded, 
-// nếu không có đoạn này, req.body sẽ là undefined khi gửi dữ liệu từ form.
+app.use(express.json());
+
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
