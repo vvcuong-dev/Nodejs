@@ -2,8 +2,6 @@ import express from 'express';
 import userRouter from './routers/user-route.js';
 import morgan from 'morgan';
 
-
-
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 

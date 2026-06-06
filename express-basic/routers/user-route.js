@@ -16,6 +16,8 @@ router.get('/users', (req, res) => {
 });
 
 router.post('/users', (req, res) => {
+    console.log('Request body:', req.body);
+    console.log('Request Headers:', req.headers);
     res.send('User created!');
 });
 
