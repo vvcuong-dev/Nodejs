@@ -1,6 +1,7 @@
 import express from 'express';
 import userRouter from './routers/user-route.js';
 import morgan from 'morgan';
+import 'express-async-errors';
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
@@ -36,10 +37,19 @@ app.get('/about', (req, res) => {
 
 app.use(userRouter);
 
-app.get('/debug', (req, res) => {
-    throw new Error('This is a test error for debugging purposes.');
-    res.send('Check the console for request details.');
+const myPromise = () => Promise.reject(new Error('This is a test error from myPromise.'));
+app.get('/debug', async (req, res) => {
+   const data = await myPromise();
+   throw new Error('This is a test error from /debug route.');
 });
+
+app.use((req, res, next) => {
+    const error = new Error('Not Found - The requested resource was not found on this server.');
+    error.status = 404;
+    next(error);
+});
+
+
 
 app.use((err, req, res, next) => {
     const status = err.status || 500;
