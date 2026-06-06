@@ -1,0 +1,20 @@
+# Ignore folder
+node_modules/
+
+# Ignore file cụ thể
+.env
+access.log
+
+# Ignore theo đuôi file
+*.log
+*.tmp
+
+# Ignore folder ở mọi cấp
+**/logs
+
+# Ngoại lệ — KHÔNG ignore file này (dù đã ignore *.log)
+!important.log
+
+
+# git rm -r --cached node_modules/
+# git commit -m "remove node_modules from tracking"
