@@ -2,14 +2,6 @@ import express from "express";
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-
-router.get('/about', (req, res) => {
-    res.send('This is the about page.');
-});
-
 router.get('/users', (req, res) => {
     const { sort, keyword } = req.query;
     res.send(`
