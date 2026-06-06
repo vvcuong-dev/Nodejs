@@ -1,6 +1,14 @@
 import express from "express";
 
 const router = express.Router();
+router.use((req, res, next) => {
+    if (req.path === '/users' && req.method === 'POST') {
+        res.status(403).send('Access denied. You cannot create a new user.');
+    }
+    req.user = { name: 'John Doe', role: 'admin' };
+
+    next();
+});
 
 router.get('/users', (req, res) => {
     const { sort, keyword } = req.query;
@@ -8,6 +16,7 @@ router.get('/users', (req, res) => {
         <h1>Users List</h1>
         <h2>Sort: ${sort || 'none'}</h2>
         <h2>Keyword: ${keyword || 'none'}</h2>
+        <h2>User: ${req.user.name} (${req.user.role})</h2>
         <form action="/users" method="POST">
             <input type="text" name="username" placeholder="Enter username" required>
             <button type="submit">Create User</button>
