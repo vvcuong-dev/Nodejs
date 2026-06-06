@@ -36,6 +36,22 @@ app.get('/about', (req, res) => {
 
 app.use(userRouter);
 
+app.get('/debug', (req, res) => {
+    throw new Error('This is a test error for debugging purposes.');
+    res.send('Check the console for request details.');
+});
+
+app.use((err, req, res, next) => {
+    const status = err.status || 500;
+    console.error('Error:', err.message);
+
+    res.status(status).json({ 
+        success: false,
+        status: status,
+        message: err.message || 'Internal Server Error',
+     });
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
