@@ -20,6 +20,7 @@
   "type": "module",
   "dependencies": {
     "express": "^5.2.1",
+    "http-status-codes": "^2.3.0",
     "morgan": "^1.11.0"
   }
 }
