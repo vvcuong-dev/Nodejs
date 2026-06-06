@@ -1,14 +1,14 @@
 import express from 'express';
 import userRouter from './routers/user-route.js';
+import morgan from 'morgan';
+
+
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = 3000;
-
-// Middleware để phân tích dữ liệu JSON và URL-encoded từ yêu cầu
-const logger = (req, res, next) => {
-    console.log(`${req.method} ${req.url} at ${new Date().toISOString()}`);
-    next();
-};
 
 const timeCheck = (req, res, next) => {
     const currentHour = new Date().getHours();
@@ -19,9 +19,7 @@ const timeCheck = (req, res, next) => {
     }
 }
 
-
-app.use(logger);
-app.use(express.json());
+app.use(morgan('dev')); // Sử dụng morgan để ghi log chi tiết về các yêu cầu HTTP
 app.use(express.urlencoded({ extended: true })); 
 // đoạn này giúp phân tích dữ liệu từ form gửi lên dưới dạng URL-encoded, 
 // nếu không có đoạn này, req.body sẽ là undefined khi gửi dữ liệu từ form.
