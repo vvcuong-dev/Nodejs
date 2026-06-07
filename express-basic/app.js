@@ -4,6 +4,10 @@ import morgan from 'morgan';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { 
+    FILE_LIMITS, 
+    UPLOAD_PATHS, 
+} from './constants/file-upload-constans.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,7 +62,7 @@ app.get('/debug', async (req, res) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, 'public/uploads/');
+        callback(null, UPLOAD_PATHS.UPLOAD_DIR);
     },
     filename: (req, file, callback) => {
         const ext = path.extname(file.originalname); // lấy đuôi .jpg, .png...
@@ -68,7 +72,21 @@ const storage = multer.diskStorage({
 });
 
 // 2. Tao middleware multer với cấu hình storage đã định nghĩa ở trên
-const upload = multer({ storage: storage });
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: FILE_LIMITS.MAX_SINGLE_FILE_SIZE },
+    fileFilter: (req, file, callback) => {
+        const ext = path.extname(file.originalname); // ext là phần mở rộng của file, ví dụ: .jpg, .png
+        const mimeType = file.mimetype; // mimeType là loại MIME của file, ví dụ: image/jpeg, image/png
+        const fileTypes = /jpg|jpeg|png|gif/; // định nghĩa các loại file được phép upload
+
+        if (fileTypes.test(ext.toLowerCase()) && fileTypes.test(mimeType)) {
+            callback(null, true); // chấp nhận file
+        } else {
+            callback(new Error('Only .jpg, .jpeg, .png, and .gif files are allowed!')); // từ chối file và trả về lỗi
+        }
+    }
+ });
 
 
 app.post('/uploads', upload.single('image'), (req, res) => {
@@ -77,6 +95,25 @@ app.post('/uploads', upload.single('image'), (req, res) => {
     }
 
     res.send({ success: true, message: 'File uploaded successfully.', filename:  `http://localhost:3000/uploads/${req.file.filename}` });
+});
+
+
+app.get('/uploads-multiple', (req, res) => {
+    res.send(
+        `<form action="/uploads-multiple" method="post" enctype="multipart/form-data">
+            <input type="file" name="images" multiple />
+            <button type="submit">Upload Multiple</button>
+        </form>`
+    )
+});
+
+app.post('/uploads-multiple', upload.array('images', FILE_LIMITS.MAX_MULTIPLE_FILES), (req, res) => {
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ success: false, message: 'No files uploaded.' });
+    }
+    
+    const fileUrls = req.files.map(file => `http://localhost:3000/uploads/${file.filename}`);
+    res.send({ success: true, message: 'Files uploaded successfully.', files: fileUrls });
 });
 
 app.get('/uploads', (req, res) => {
@@ -98,7 +135,6 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
     const status = err.status || 500;
-    console.error('Error:', err.message);
 
     res.status(status).json({ 
         success: false,
