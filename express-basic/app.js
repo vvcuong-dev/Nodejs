@@ -82,9 +82,13 @@ const upload = multer({
 
         if (fileTypes.test(ext.toLowerCase()) && fileTypes.test(mimeType)) {
             callback(null, true); // chấp nhận file
-        } else {
-            callback(new Error('Only .jpg, .jpeg, .png, and .gif files are allowed!')); // từ chối file và trả về lỗi
+        }else {
+            const error = new Error('Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.');
+            error.status = 400;
+            callback(error); // từ chối file và trả về lỗi
         }
+
+    
     }
  });
 
@@ -134,6 +138,14 @@ app.use((req, res, next) => {
 
 
 app.use((err, req, res, next) => {
+    // Kiểm tra error thuộc MulterError (lỗi liên quan đến multer)
+    if (err instanceof multer.MulterError) {
+        return res.json({ 
+            success: false, 
+            message: err.message 
+        });
+    }
+
     const status = err.status || 500;
 
     res.status(status).json({ 
