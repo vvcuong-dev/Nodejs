@@ -1,5 +1,6 @@
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
+import eslintConfigPrettier from "eslint-config-prettier";
 
 export default tseslint.config(
     eslint.configs.recommended,
@@ -15,5 +16,6 @@ export default tseslint.config(
     {
         files: ['src/**/*.ts'], // Áp dụng quy tắc này chỉ cho các file TypeScript
         ignores: ['node_modules/**', 'dist/**'], // Bỏ qua thư mục node_modules và dist
-    }
+    },
+    eslintConfigPrettier
 );
