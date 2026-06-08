@@ -8,7 +8,7 @@ export default tseslint.config(
     {
         rules: {
             'prefer-const': 'error', // Yêu cầu sử dụng const thay vì let nếu biến không được gán lại
-             'no-unused-vars': 'warn', // Cảnh báo khi có biến được khai báo nhưng không sử dụng
+             'no-unused-vars': 'off', // Cảnh báo khi có biến được khai báo nhưng không sử dụng
              '@typescript-eslint/no-unused-vars': 'warn', // Cảnh báo khi có biến TypeScript được khai báo nhưng không sử dụng
               '@typescript-eslint/no-explicit-any': 'warn' // Tắt cảnh báo khi sử dụng kiểu any trong TypeScript
         },

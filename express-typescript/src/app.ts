@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import express, { Application, Request, Response} from 'express';
-import mysql from 'mysql2/promise';
+import { prisma } from './lib/prisma';
 
 const app: Application = express();
 const port: number = 3000;
@@ -11,17 +11,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req: Request, res: Response) => {
-    const connection = await mysql.createConnection({
-        host: process.env.DB_HOST || 'localhost',
-        user: process.env.DB_USERNAME || 'root',
-        password: process.env.DB_PASSWORD || '123456',
-        port: Number(process.env.DB_PORT) || 3306,
-        database: process.env.DB_NAME || 'nodejs'
+    const user = await prisma.user.create({
+        data: {
+            name: 'John Doe',
+            email: 'cuongvudev@example.com'
+        }
     });
-    const [rows] = await connection.execute('SELECT * FROM users');
-    console.log(rows);
 
-    res.send('Hello, World!');
+    res.json(user);
 });
 
 app.get('/about', (req: Request, res: Response) => {
