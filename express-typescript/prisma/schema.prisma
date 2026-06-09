@@ -28,9 +28,12 @@ model Product {
   id          String      @id @default(uuid())
   name        String
   price       Int
+  description String?
   status      Boolean   @default(true)
   createdAt   DateTime  @default(now()) @db.Timestamp()
   updatedAt   DateTime  @updatedAt @db.Timestamp()
 
   @@map("products") // Đặt tên bảng trong cơ sở dữ liệu là "products"
+  @@index([price, description]) // Tạo index trên trường price và description để tăng tốc độ truy vấn
+  @@index([name]) // Tạo index trên trường name để tăng tốc độ truy vấn
 }

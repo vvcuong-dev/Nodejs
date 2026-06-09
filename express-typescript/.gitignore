@@ -36,4 +36,4 @@ coverage/
 
 # typescript
 *.tsbuildinfo
-/generated/prisma
+src/generated
