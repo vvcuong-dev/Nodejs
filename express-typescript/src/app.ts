@@ -11,13 +11,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req: Request, res: Response) => {
-    const products = await prisma.product.create({
+    const order = await prisma.order.create({
         data: {
-            name: 'Sample Product',
-            price: 19.99,
+            total: 2000,
+            status: 'SHIPPED',
         },
     });
-    res.json(products);
+
+    res.json(order);
 });
 
 app.get('/about', (req: Request, res: Response) => {

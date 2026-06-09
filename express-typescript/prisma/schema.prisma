@@ -21,7 +21,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  @@map("users") // Đặt tên bảng trong cơ sở dữ liệu là "users"
+  @@map("users") 
 }
 
 model Product {
@@ -30,10 +30,27 @@ model Product {
   price       Int
   description String?
   status      Boolean   @default(true)
-  createdAt   DateTime  @default(now()) @db.Timestamp()
-  updatedAt   DateTime  @updatedAt @db.Timestamp()
+  createdAt   DateTime?  @default(now()) @db.Timestamp() @map("created_at")
+  updatedAt   DateTime?  @updatedAt @db.Timestamp() @map("updated_at")
 
-  @@map("products") // Đặt tên bảng trong cơ sở dữ liệu là "products"
-  @@index([price, description]) // Tạo index trên trường price và description để tăng tốc độ truy vấn
-  @@index([name]) // Tạo index trên trường name để tăng tốc độ truy vấn
+  @@map("products") 
+  @@index([price, description]) 
+  @@index([name])
+}
+
+
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  COMPLETED
+  CANCELED
+}
+model Order {
+  id        String      @id @default(uuid())
+  total     Int
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime?  @default(now()) @db.Timestamp() @map("created_at")
+  updatedAt DateTime?  @updatedAt @db.Timestamp() @map("updated_at")
+
+  @@map("orders") 
 }
