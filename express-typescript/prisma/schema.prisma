@@ -23,3 +23,14 @@ model User {
 
   @@map("users") // Đặt tên bảng trong cơ sở dữ liệu là "users"
 }
+
+model Product {
+  id          String      @id @default(uuid())
+  name        String
+  price       Int
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @db.Timestamp()
+  updatedAt   DateTime  @updatedAt @db.Timestamp()
+
+  @@map("products") // Đặt tên bảng trong cơ sở dữ liệu là "products"
+}
