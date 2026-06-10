@@ -20,8 +20,21 @@ model User {
   bio       String?   @db.Text
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  userInfo  UserInfo?
 
   @@map("users") 
+}
+
+model UserInfo {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // onDelete: cascade là để khi xóa user thì thông tin user cũng sẽ bị xóa theo
+  userId    Int      @unique 
+  address   String?
+  province  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("user_infos")
 }
 
 model Product {

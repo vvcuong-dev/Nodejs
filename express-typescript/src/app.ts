@@ -11,14 +11,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req: Request, res: Response) => {
-    const order = await prisma.order.create({
+    const user = await prisma.user.create({
         data: {
-            total: 2000,
-            status: 'SHIPPED',
+            name: 'John Doe',
+            email: 'john.doe@example.com',
+            userInfo: {
+                create: {
+                    address: '123 Main St',
+                    province: 'California',
+                },
+            },
         },
     });
-
-    res.json(order);
+    res.json(user);
 });
 
 app.get('/about', (req: Request, res: Response) => {
