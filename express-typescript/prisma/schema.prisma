@@ -22,7 +22,6 @@ model User {
   updatedAt DateTime  @updatedAt
   userInfo  UserInfo?
   posts    Post[]
-  orders   Order[] 
   userOrders UserOrder[]
 
   @@map("users") 
@@ -81,7 +80,6 @@ model Order {
   status    OrderStatus @default(PENDING)
   createdAt DateTime?  @default(now()) @db.Timestamp() @map("created_at")
   updatedAt DateTime?  @updatedAt @db.Timestamp() @map("updated_at")
-  users     User[]
   userOrders UserOrder[]
 
   @@map("orders") 
@@ -113,3 +111,12 @@ model Category {
 
   @@map("categories") 
 }
+
+
+// Lưu ý: db push sẽ tạo bảng mới nếu bảng chưa tồn tại, nhưng sẽ không xóa cột hoặc bảng đã tồn tại nếu chúng không còn trong schema. 
+// Nếu bạn muốn đồng bộ hoàn toàn với schema, bạn có thể sử dụng db reset, nhưng hãy cẩn thận vì nó sẽ xóa tất cả dữ liệu hiện có trong cơ sở dữ liệu của bạn.
+// sử dụng câu lệnh pnpm: lnpx prisma db push --preview-feature để đồng bộ schema với cơ sở dữ liệu mà không mất dữ liệu hiện có.
+
+
+// có thể sử dụng db pull để cập nhật schema từ cơ sở dữ liệu nếu có thay đổi trực tiếp trên cơ sở dữ liệu, 
+//nhưng hãy cẩn thận vì nó có thể gây mất dữ liệu nếu có sự khác biệt lớn giữa schema và cơ sở dữ liệu.
