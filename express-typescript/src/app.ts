@@ -11,20 +11,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req: Request, res: Response) => {
-    const user = await prisma.user.update({
-        where: {
-            email: 'cuong.vu@gmail.com'
-        },
-        data: {
-            userInfo: {
-                update: {
-                    address: '123 Main St',
-                    province: 'Hanoi'
-                }
-            }
-        }
+    const category = await prisma.category.findUnique({
+        where: { id: 1 },
+        include: { categories: true }, 
+        // include để lấy thông tin của parent và categories liên quan đến category có id = 1
+        // parent: true — lấy thông tin của category cha (nếu có)
+        // categories: true — lấy thông tin của các category con (nếu có)
     });
-    res.json(user);
+
+    res.json(category);
 });
 
 app.get('/about', (req: Request, res: Response) => {

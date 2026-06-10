@@ -89,12 +89,27 @@ model Order {
 
 model UserOrder {
   id Int @id @default(autoincrement())
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade) // onDelete: cascade là để khi xóa order thì user_order cũng sẽ bị xóa theo
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade) 
   orderId String
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade) // onDelete: cascade là để khi xóa user thì user_order cũng sẽ bị xóa theo
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
 
   @@map("user_orders") 
+}
+
+
+model Category {
+  id          Int         @id @default(autoincrement())
+  name        String
+  parentId    Int?        @map("parent_id")
+  parent      Category?   @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: Cascade)  
+  // fields: [parentId] — dùng cột parentId làm khóa ngoại, 
+  // references: [id] — trỏ đến id của chính bảng categories
+  categories  Category[]  @relation("CategoryToCategory")
+  createdAt   DateTime?   @default(now()) @db.Timestamp() @map("created_at")
+  updatedAt   DateTime?   @updatedAt @db.Timestamp() @map("updated_at")
+
+  @@map("categories") 
 }
