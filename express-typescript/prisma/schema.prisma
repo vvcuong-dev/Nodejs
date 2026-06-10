@@ -21,9 +21,24 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userInfo  UserInfo?
+  posts    Post[]
 
   @@map("users") 
 }
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?   @db.Text
+  user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade) // onDelete: cascade là để khi xóa user thì bài viết cũng sẽ bị xóa theo
+  userId   Int?
+  createdAt DateTime?  @default(now()) @db.Timestamp() @map("created_at")
+  updatedAt DateTime?  @updatedAt      @db.Timestamp() @map("updated_at")
+
+  @@map("posts") 
+}
+
+
 
 model UserInfo {
   id        Int      @id @default(autoincrement())
@@ -31,8 +46,8 @@ model UserInfo {
   userId    Int      @unique 
   address   String?
   province  String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime?  @default(now()) @db.Timestamp() @map("created_at")
+  updatedAt DateTime?  @updatedAt      @db.Timestamp() @map("updated_at")
 
   @@map("user_infos")
 }

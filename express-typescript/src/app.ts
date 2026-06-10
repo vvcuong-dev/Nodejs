@@ -11,17 +11,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req: Request, res: Response) => {
-    const user = await prisma.user.create({
-        data: {
-            name: 'John Doe',
-            email: 'john.doe@example.com',
-            userInfo: {
-                create: {
-                    address: '123 Main St',
-                    province: 'California',
-                },
-            },
+    const user = await prisma.user.update({
+        where: {
+            email: 'cuong.vu@gmail.com'
         },
+        data: {
+            userInfo: {
+                update: {
+                    address: '123 Main St',
+                    province: 'Hanoi'
+                }
+            }
+        }
     });
     res.json(user);
 });
