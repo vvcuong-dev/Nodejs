@@ -22,6 +22,8 @@ model User {
   updatedAt DateTime  @updatedAt
   userInfo  UserInfo?
   posts    Post[]
+  orders   Order[] 
+  userOrders UserOrder[]
 
   @@map("users") 
 }
@@ -79,6 +81,20 @@ model Order {
   status    OrderStatus @default(PENDING)
   createdAt DateTime?  @default(now()) @db.Timestamp() @map("created_at")
   updatedAt DateTime?  @updatedAt @db.Timestamp() @map("updated_at")
+  users     User[]
+  userOrders UserOrder[]
 
   @@map("orders") 
+}
+
+model UserOrder {
+  id Int @id @default(autoincrement())
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade) // onDelete: cascade là để khi xóa order thì user_order cũng sẽ bị xóa theo
+  orderId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) // onDelete: cascade là để khi xóa user thì user_order cũng sẽ bị xóa theo
+  userId Int
+
+
+  @@map("user_orders") 
 }
