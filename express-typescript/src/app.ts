@@ -94,8 +94,30 @@ app.get('/users', async (req: Request, res: Response) => {
     res.json(users);        
 });
 
-app.get('/about', (req: Request, res: Response) => {
-    res.send('This is an Express server written in TypeScript.');
+app.get('/about', async (req: Request, res: Response) => {
+    const page = Number(req.query.page) || 1; 
+    const limit = Number(req.query.limit) || 3; 
+    const skip = (page - 1) * limit;
+
+    const [data, count] = await Promise.all([
+        prisma.user.findMany({
+            skip,
+            take: limit,
+            orderBy: {
+                id: 'desc'
+            }
+        }),
+        prisma.user.count()
+    ]);
+
+
+    res.json({
+        data: data,
+        total: count,
+        page: page,
+        limit: limit,
+        totalPages: Math.ceil(count / limit) 
+    }); 
 });
 
 
