@@ -14,7 +14,7 @@ app.get('/', async (req: Request, res: Response) => {
     res.send('Hello, World!');
 });
 
-app.get('/users', async (req: Request, res: Response) => {
+app.get('/users-update', async (req: Request, res: Response) => {
    const users = await prisma.user.updateMany({
     where: {
         name: {
@@ -64,8 +64,10 @@ app.get('/users-delete', async (req: Request, res: Response) => {
     res.json(user);
 });
 
-
-
+app.get('/users', async (req: Request, res: Response) => {
+    const users = await prisma.user.findMany();
+    res.json(users);
+});
 
 app.get('/about', (req: Request, res: Response) => {
     res.send('This is an Express server written in TypeScript.');
