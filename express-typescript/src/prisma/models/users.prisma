@@ -3,8 +3,8 @@ model User {
   name        String
   email       String   @unique
   password    String
-  createdAt   DateTime @default(now()) @db.Timestamp @map("created_at")
-  updatedAt   DateTime @updatedAt  @db.Timestamp()    @map("updated_at")
+  createdAt   DateTime @default(now()) @db.Timestamp      @map("created_at")
+  updatedAt   DateTime @updatedAt      @db.Timestamp()    @map("updated_at")
 
   @@map("users")
 }

@@ -86,14 +86,12 @@ app.get('/users-delete', async (req: Request, res: Response) => {
 });
 
 app.get('/users', async (req: Request, res: Response) => {
-    const product = await prisma.product.findMany({
-        where: {
-            description: {
-                not: null,
-            },
+    const users = await prisma.user.findMany({
+        orderBy: {
+            createdAt: 'desc'
         }
     });
-    res.json(product);
+    res.json(users);        
 });
 
 app.get('/about', (req: Request, res: Response) => {
