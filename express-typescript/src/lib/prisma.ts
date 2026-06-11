@@ -9,7 +9,8 @@ const prisma = new PrismaClient({
         user: {
             password: true,
         }
-    }
+    },
+    log: ['query', 'error', 'warn'],
 });
 
 export { prisma };

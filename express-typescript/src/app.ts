@@ -53,6 +53,31 @@ app.get('/users-upsert', async (req: Request, res: Response) => {
     res.json(user);
 });
 
+app.get('/users-create', async (req: Request, res: Response) => {
+    
+    const user = await prisma.user.createMany({
+        data: [ 
+            {
+                name: "Jane Smith",
+                email: "cc@gmail.com",
+                password: "123456"
+            },
+            {
+                name: "John Doe",
+                email: "john.doe@example.com",
+                password: "123456"
+            },
+            {
+                name: "dta",
+                email: "dta@gmail.com",
+                password: "123456"
+            },
+        ],
+        skipDuplicates: true,
+    });
+    res.json(user);
+});
+
 
 app.get('/users-delete', async (req: Request, res: Response) => {
     
@@ -65,7 +90,13 @@ app.get('/users-delete', async (req: Request, res: Response) => {
 });
 
 app.get('/users', async (req: Request, res: Response) => {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+        where: {
+            email: {
+                startsWith: "john",
+            }
+        }
+    });
     res.json(users);
 });
 
