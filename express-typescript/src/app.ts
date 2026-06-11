@@ -55,27 +55,23 @@ app.get('/users-upsert', async (req: Request, res: Response) => {
 
 app.get('/users-create', async (req: Request, res: Response) => {
     
-    const user = await prisma.user.createMany({
+    const product = await prisma.product.createMany({
         data: [ 
             {
-                name: "Jane Smith",
-                email: "cc@gmail.com",
-                password: "123456"
+                    name: "iPhone 13 Pro Max",
+                    email: "okel@gmail.com",
+                    description: "The latest iPhone model with advanced features.",
+                    price: 1099.99,
             },
             {
-                name: "John Doe",
-                email: "john.doe@example.com",
-                password: "123456"
-            },
-            {
-                name: "dta",
-                email: "dta@gmail.com",
-                password: "123456"
+                name: "Samsung Galaxy S21",
+                email: "okelaaaa@gmail.com",
+                price: 899.99,
             },
         ],
         skipDuplicates: true,
     });
-    res.json(user);
+    res.json(product);
 });
 
 
@@ -90,14 +86,14 @@ app.get('/users-delete', async (req: Request, res: Response) => {
 });
 
 app.get('/users', async (req: Request, res: Response) => {
-    const users = await prisma.user.findMany({
+    const product = await prisma.product.findMany({
         where: {
-            email: {
-                startsWith: "john",
-            }
+            description: {
+                not: null,
+            },
         }
     });
-    res.json(users);
+    res.json(product);
 });
 
 app.get('/about', (req: Request, res: Response) => {
