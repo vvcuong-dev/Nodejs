@@ -112,6 +112,36 @@ app.get('/users', async (req: Request, res: Response) => {
     res.json(users);        
 });
 
+app.get('/user-posts', async (req: Request, res: Response) => {
+    // const userWithPosts = await prisma.user.findMany({
+    //     include: {
+    //         posts: true 
+    //         // nghĩa là khi truy vấn người dùng, Prisma sẽ tự động lấy tất cả các bài viết liên quan đến mỗi người dùng và bao gồm chúng trong kết quả trả về. 
+    //         // Điều này giúp bạn dễ dàng quản lý dữ liệu liên quan mà không cần phải thực hiện nhiều truy vấn riêng biệt.
+    //     },
+    //     orderBy: {
+    //         createdAt: 'desc'
+    //     }
+    // });
+    // res.json(userWithPosts);        
+
+    const postsWithAuthors = await prisma.post.findMany({
+        select: {
+            title: true,
+            content: true,
+            author: {
+                select: {
+                    name: true,
+                    email: true
+                }
+            } 
+        }
+    });
+
+    res.json(postsWithAuthors);
+
+});
+
 app.get('/about', async (req: Request, res: Response) => {
     const page = Number(req.query.page) || 1; 
     const limit = Number(req.query.limit) || 3; 

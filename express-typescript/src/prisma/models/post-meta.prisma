@@ -1,0 +1,11 @@
+model PostMeta {
+    id        Int      @id @default(autoincrement())
+    views     Int      @default(0)
+    likes     Int      @default(0)
+    postId    Int      @unique
+    post      Post     @relation(fields: [postId], references: [id])
+    createdAt DateTime @default(now()) @db.Timestamp      @map("created_at")
+    updatedAt DateTime @updatedAt      @db.Timestamp()    @map("updated_at")
+
+    @@map("post_meta")
+}
