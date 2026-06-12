@@ -55,25 +55,43 @@ app.get('/users-upsert', async (req: Request, res: Response) => {
 
 app.get('/users-create', async (req: Request, res: Response) => {
     
-    const product = await prisma.product.createMany({
-        data: [ 
-            {
-                    name: "iPhone 13 Pro Max",
-                    email: "okel@gmail.com",
-                    description: "The latest iPhone model with advanced features.",
-                    price: 1099.99,
-            },
-            {
-                name: "Samsung Galaxy S21",
-                email: "okelaaaa@gmail.com",
-                price: 899.99,
-            },
-        ],
-        skipDuplicates: true,
-    });
-    res.json(product);
+    const post = await prisma.post.create({
+        data: {
+            title: "Post 2",
+            content: "This is the content of post 2.",
+            author: {
+                connect: { email: "cuongvuive@gmail.com" } 
+                // nghĩa là kết nối bài viết này với user có email = "cuongvuive@gmail.com". 
+                // Điều này giả định rằng user với email = "cuongvuive@gmail.com" đã tồn tại trong cơ sở dữ liệu của bạn. 
+                // Nếu user này không tồn tại, bạn sẽ nhận được lỗi khi cố gắng tạo bài viết này.
+            }
+        }
+    })
+    res.json(post);
 });
 
+app.get('/users-create-post', async (req: Request, res: Response) => {
+    const user = await prisma.user.create({
+        data: {
+            name: "dganm",
+            email: "da@example.com",
+            password: "123456",
+            posts: {
+                create: [
+                    {
+                        title: "Post of user dganm 1",
+                        content: "This is the content of post 1."
+                    },
+                    {
+                        title: "Post of user dganm 2",
+                        content: "This is the content of post 2."
+                    }
+                ]
+            }
+        }
+    });
+    res.json(user);
+});
 
 app.get('/users-delete', async (req: Request, res: Response) => {
     

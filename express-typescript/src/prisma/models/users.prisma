@@ -5,6 +5,7 @@ model User {
   password    String
   createdAt   DateTime @default(now()) @db.Timestamp      @map("created_at")
   updatedAt   DateTime @updatedAt      @db.Timestamp()    @map("updated_at")
+  posts Post[]
 
   @@map("users")
 }

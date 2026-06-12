@@ -1,0 +1,12 @@
+model Post {
+    id        Int      @id @default(autoincrement())
+    title     String
+    content   String
+    published Boolean  @default(false)
+    authorId  Int
+    author    User     @relation(fields: [authorId], references: [id])
+    createdAt DateTime @default(now()) @db.Timestamp      @map("created_at")
+    updatedAt DateTime @updatedAt      @db.Timestamp()    @map("updated_at")
+
+    @@map("posts")
+}
