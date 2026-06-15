@@ -12,6 +12,10 @@ export default tseslint.config(
              '@typescript-eslint/no-unused-vars': 'warn', // Cảnh báo khi có biến TypeScript được khai báo nhưng không sử dụng
               '@typescript-eslint/no-explicit-any': 'warn' // Tắt cảnh báo khi sử dụng kiểu any trong TypeScript
         },
+        env: {
+            browser: true, // Biến toàn cục của trình duyệt
+            node: true, // Biến toàn cục của Node.js
+        }
     },
     {
         files: ['src/**/*.ts'], // Áp dụng quy tắc này chỉ cho các file TypeScript
