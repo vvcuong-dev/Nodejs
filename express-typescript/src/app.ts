@@ -113,6 +113,9 @@ app.get('/users', async (req: Request, res: Response) => {
 });
 
 app.get('/user-posts', async (req: Request, res: Response) => {
+
+    // include là một tùy chọn trong Prisma cho phép bạn bao gồm các mối quan hệ liên quan khi truy vấn dữ liệu.
+
     // const userWithPosts = await prisma.user.findMany({
     //     include: {
     //         posts: true 
@@ -125,20 +128,61 @@ app.get('/user-posts', async (req: Request, res: Response) => {
     // });
     // res.json(userWithPosts);        
 
-    const postsWithAuthors = await prisma.post.findMany({
-        select: {
-            title: true,
-            content: true,
-            author: {
-                select: {
-                    name: true,
-                    email: true
+    // select là một tùy chọn khác trong Prisma cho phép bạn chỉ định các trường cụ thể mà bạn muốn truy vấn, thay vì lấy tất cả các trường của một bảng.
+
+    // const postsWithAuthors = await prisma.post.findMany({
+    //     select: {
+    //         title: true,
+    //         content: true,
+    //         author: {
+    //             select: {
+    //                 name: true,
+    //                 email: true
+    //             }
+    //         } 
+    //     }
+    // });
+
+    // res.json(postsWithAuthors);
+
+
+    // connect và disconnect là các tùy chọn trong Prisma được sử dụng để quản lý mối quan hệ giữa các bảng khi cập nhật dữ liệu.
+    // const post = await prisma.post.update({
+    //     where: {
+    //         id: 1
+    //     },
+    //     data: {
+    //         author: {
+    //             // disconnect: true,
+    //             connect: {
+    //                 id: 1
+    //             }
+    //         }
+
+    //     }
+    // });
+
+    // res.json(post);
+
+    // update bản ghi con khi update bản ghi cha
+    const post = await prisma.post.update({
+    where: {
+        id: 2
+    },
+    data: {
+        title: "Updated Post Title",
+        content: "Updated content of the post.",  
+        author: {
+            update: {
+                data: {
+                    name: "cuongvv updated name"
                 }
-            } 
+            }
         }
+    }
     });
 
-    res.json(postsWithAuthors);
+    res.json(post);
 
 });
 
