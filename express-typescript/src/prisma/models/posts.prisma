@@ -6,6 +6,7 @@ model Post {
     authorId  Int?
     author    User?     @relation(fields: [authorId], references: [id])
     postMetas    PostMeta?
+    status    Boolean  @default(true)
     createdAt DateTime @default(now()) @db.Timestamp      @map("created_at")
     updatedAt DateTime @updatedAt      @db.Timestamp()    @map("updated_at")
 

@@ -165,25 +165,39 @@ app.get('/user-posts', async (req: Request, res: Response) => {
     // res.json(post);
 
     // update bản ghi con khi update bản ghi cha
-    const post = await prisma.post.update({
-    where: {
-        id: 2
-    },
-    data: {
-        title: "Updated Post Title",
-        content: "Updated content of the post.",  
-        author: {
-            update: {
-                data: {
-                    name: "cuongvv updated name"
+    // const post = await prisma.post.update({
+    // where: {
+    //     id: 2
+    // },
+    // data: {
+    //     title: "Updated Post Title",
+    //     content: "Updated content of the post.",  
+    //     author: {
+    //         update: {
+    //             data: {
+    //                 name: "cuongvv updated name"
+    //             }
+    //         }
+    //     }
+    // }
+    // });
+
+    // res.json(post);
+
+    const user = await prisma.user.update({
+        where: {
+            id: 1
+        },
+        data: {
+            posts: {
+                deleteMany: {
+                    status: false
                 }
             }
         }
-    }
     });
 
-    res.json(post);
-
+    res.json(user);
 });
 
 app.get('/about', async (req: Request, res: Response) => {
