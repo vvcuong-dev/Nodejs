@@ -281,6 +281,48 @@ app.get('/about', async (req: Request, res: Response) => {
     }); 
 });
 
+app.get('/orders', async (req: Request, res: Response) => {
+    // const stats = await prisma.order.aggregate({
+    //     _count: {
+    //         id: true
+    //     },
+    //     _sum: {
+    //         totalPrice: true
+    //     },
+    //     _avg: {
+    //         totalPrice: true
+    //     },
+    //     _min: {
+    //         totalPrice: true
+    //     },
+    //     _max: {
+    //         totalPrice: true
+    //     },
+    //     where: {
+    //         status: true
+    //     }
+    // });
+
+    // res.json(stats);  
+
+
+    const salesByStatus = await prisma.order.groupBy({
+        by: ['status'],
+        _sum: {
+            totalPrice: true
+        },
+        _count: {
+            id: true
+        },
+        having: {
+            totalPrice: {
+                _sum: { gt: 1000 }
+            }
+        }
+    });
+
+    res.json(salesByStatus);
+});
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
