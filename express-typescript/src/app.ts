@@ -14,9 +14,15 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.get('/', async (req: Request, res: Response) => {
-    const title = 'Home Page';
+    const title = '<i>Welcome to Express with TypeScript!</i>';
+    const status = false;
+    const utils = {
+        doSomething: () => {
+            return 'Doing something...';
+        }
+    }
 
-    res.render('home', { title });
+    res.render('home', { title, status, utils });
 });
 
 app.listen(port, () => {

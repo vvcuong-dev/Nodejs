@@ -1,1 +1,11 @@
-<h1>Học EJS đáng ghét: <%= title %></h1> 
+<h1>Học EJS đáng ghét: <%- title %></h1> 
+<% if (status) { %>
+    <p>Trạng thái: Đang hoạt động</p>
+<% } else { %>
+    <p>Trạng thái: Không hoạt động</p>
+<% } %>
+<p><%= utils.doSomething() %></p>
+
+<%#
+<p>Đây là một đoạn văn bình thường.</p>
+%>
