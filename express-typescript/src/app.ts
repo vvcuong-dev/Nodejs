@@ -184,20 +184,37 @@ app.get('/user-posts', async (req: Request, res: Response) => {
 
     // res.json(post);
 
-    const user = await prisma.user.update({
-        where: {
-            id: 1
-        },
-        data: {
-            posts: {
-                deleteMany: {
-                    status: false
+    // const user = await prisma.user.update({
+    //     where: {
+    //         id: 1
+    //     },
+    //     data: {
+    //         posts: {
+    //             deleteMany: {
+    //                 status: false
+    //             }
+    //         }
+    //     }
+    // });
+
+    // res.json(user);
+
+    const users = await prisma.user.findMany({
+        include: {
+            _count: {
+                select: {
+                    posts: true
                 }
+            }
+        },
+        orderBy: {
+            posts: {
+                _count: 'asc'
             }
         }
     });
 
-    res.json(user);
+    res.json(users);
 });
 
 app.get('/about', async (req: Request, res: Response) => {
