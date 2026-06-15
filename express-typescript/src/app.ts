@@ -199,22 +199,60 @@ app.get('/user-posts', async (req: Request, res: Response) => {
 
     // res.json(user);
 
-    const users = await prisma.user.findMany({
-        include: {
-            _count: {
-                select: {
-                    posts: true
-                }
-            }
-        },
-        orderBy: {
-            posts: {
-                _count: 'asc'
-            }
+    // const users = await prisma.user.findMany({
+    //     include: {
+    //         _count: {
+    //             select: {
+    //                 posts: true
+    //             }
+    //         }
+    //     },
+    //     orderBy: {
+    //         posts: {
+    //             _count: 'asc'
+    //         }
+    //     }
+    // });
+
+    // res.json(users);
+
+
+    // await prisma.account.update({
+    //     where: {
+    //         id: 2,
+    //     },
+    //     data: {
+    //         balance: {
+    //             increment: 100000
+    //         }
+    //     }
+    // });
+
+    // res.json({ message: "Account balance updated successfully." });
+
+    const result = await prisma.$transaction(async (tx) => {
+        const sender = await tx.account.update({
+            where: { id: 1 },
+            data: { balance: { decrement: 50000 } }
+        });
+
+        if (sender.balance < 0) {
+            throw new Error("Insufficient funds");
         }
+
+        const receiver = await tx.account.update({
+            where: { id: 2 },
+            data: { balance: { increment: 50000 } }
+        });
+
+        return { sender, receiver };
+    }, {
+        maxWait: 5000, // Đặt thời gian chờ tối đa cho giao dịch là 5 giây
+        timeout: 10000, // Đặt thời gian chờ tối đa cho toàn bộ giao dịch là 10 giây
     });
 
-    res.json(users);
+    res.json(result);
+
 });
 
 app.get('/about', async (req: Request, res: Response) => {

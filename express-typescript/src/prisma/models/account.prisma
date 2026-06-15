@@ -1,0 +1,9 @@
+model Account {
+    id       Int        @id @default(autoincrement())
+    balance  Int        @default(0)
+ 
+    createdAt DateTime  @default(now()) @db.Timestamp      @map("created_at")
+    updatedAt DateTime  @updatedAt      @db.Timestamp()    @map("updated_at")
+
+    @@map("accounts")
+}
