@@ -79,14 +79,24 @@ const userSchema = z.object({
             })
         ).min(1, "At least one item is required in something array")
     }).optional(),
-    password: z.string()
-                .min(6, { message: "Password is required and must be at least 6 characters long" }),
+    password: z.string(),
     confirmPassword: z.string().optional()                  
-}).refine(({ password, confirmPassword }) => {
-    return password.trim() === confirmPassword?.trim();
-}, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"] // lỗi sẽ được gán vào trường confirmPassword
+}).superRefine(({ password, confirmPassword }, context) => {
+    if (password.length < 6) {
+          return context.addIssue({
+            code: "custom",
+            message: "Password must be at least 6 characters long",
+            path: ["password"]
+          });
+    }
+
+    if (password !== confirmPassword) {
+        return context.addIssue({
+            code: "custom",
+            message: "Confirm password does not match password",
+            path: ["confirmPassword"]
+        });
+    }
 });
 
     /**
