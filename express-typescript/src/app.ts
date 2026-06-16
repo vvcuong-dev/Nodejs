@@ -42,7 +42,11 @@ const userSchema = z.object({
             .trim()
             .min(1, "Email is required")
             .pipe(z.email("Invalid email format")), // pipe nghia la sau khi validate xong chuoi thi se tiep tuc validate email
-    age: z.number().int().positive("Age must be a positive integer"),
+    age: z.number()
+            .gte(18, "Age must be greater than 18")
+            .lt(50, "Age must be less than 50")
+            .positive("tuổi phải là số dương")
+            .int("Age must be an integer"),
     url: z.url("Invalid URL format").optional(),
     birthday: z.string()
                 .trim()
@@ -55,7 +59,9 @@ const userSchema = z.object({
     phone: z.string()
             .trim()
             .min(1, "Phone is required")
-            .regex(/^0\d{9}$/,  { message: "Phone number must start with 0 and be followed by 9 digits" }) 
+            .regex(/^0\d{9}$/,  { message: "Phone number must start with 0 and be followed by 9 digits" }),
+    status: z.enum(["active", "inactive"], { message: "Status must be either 'active' or 'inactive'" }),
+    bio: z.string().nullable().optional() // bio có thể là chuỗi hoặc null, và không bắt buộc phải có
     });
 
     /**
@@ -68,8 +74,8 @@ const userSchema = z.object({
 app.post('/users', (req: Request, res: Response) => {
     try {
 
-        const { name = "", email = "", age, url, birthday = "", phone = "" } = req.body;
-        const body = userSchema.parse({ name, email, age, url, birthday, phone }); // userSchema.parse nghia la validate du lieu theo schema, neu du lieu khong hop le thi se throw ra loi va vao catch
+        const { name = "", email = "", age, url, birthday = "", phone = "", status = "inactive", bio } = req.body;
+        const body = userSchema.parse({ name, email, age, url, birthday, phone, status, bio }); // userSchema.parse nghia la validate du lieu theo schema, neu du lieu khong hop le thi se throw ra loi va vao catch
 
         res.json({ message: 'User created successfully', user: body });
     } catch (error) {
