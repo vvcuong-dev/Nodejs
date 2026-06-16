@@ -1,24 +1,7 @@
-<h1>Học EJS đáng ghét: <%- title %></h1> 
-<% if (status) { %>
-    <p>Trạng thái: Đang hoạt động</p>
-<% } else { %>
-    <p>Trạng thái: Không hoạt động</p>
-<% } %>
-<p><%= utils.doSomething() %></p>
-
-<h2>Danh sách người dùng:</h2>
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Tên</th>
-        <th>Email</th>
-        <th>Hành động</th>
-    </tr>
-    <% users.forEach((user, index) => { %>
-        <%- include('inc/user-item', { user, index }) %>
-    <% }) %>
-</table>
-
-<%#
-<p>Đây là một đoạn văn bình thường.</p>
-%>
+<h1>Welcome to the home page!</h1>
+<h1>User List</h1>
+<ul>
+    <% users.forEach(user => { %>
+        <li><%= user.name %> - <%= user.email %></li>
+    <% }); %>
+</ul>
