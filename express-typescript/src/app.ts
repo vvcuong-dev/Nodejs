@@ -37,7 +37,15 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 const userSchema = z.object({
-    name: z.string().trim().min(1, "Name is required"),
+    name: z.string()
+            .trim()
+            .min(1, "Name is required")
+            .refine((value) => {
+                if (value === value.toUpperCase()) {
+                    return true;
+                }
+                return false;
+            }, { message: "Name must be in uppercase" }),
     email: z.string()
             .trim()
             .min(1, "Email is required")
@@ -70,8 +78,16 @@ const userSchema = z.object({
                 value: z.boolean()
             })
         ).min(1, "At least one item is required in something array")
-    }).optional()
-    });
+    }).optional(),
+    password: z.string()
+                .min(6, { message: "Password is required and must be at least 6 characters long" }),
+    confirmPassword: z.string().optional()                  
+}).refine(({ password, confirmPassword }) => {
+    return password.trim() === confirmPassword?.trim();
+}, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"] // lỗi sẽ được gán vào trường confirmPassword
+});
 
     /**
      *  trong regex: ^ co nghia la bat dau chuoi, 0 co nghia la chu so 0, \d co nghia la mot chu so, {9} co nghia la lap lai 9 lan, $ co nghia la ket thuc chuoi
@@ -83,8 +99,8 @@ const userSchema = z.object({
 app.post('/users', (req: Request, res: Response) => {
     try {
 
-        const { name = "", email = "", age, url, birthday = "", phone = "", status = "inactive", bio, address } = req.body;
-        const body = userSchema.parse({ name, email, age, url, birthday, phone, status, bio, address }); // userSchema.parse nghia la validate du lieu theo schema, neu du lieu khong hop le thi se throw ra loi va vao catch
+        const { name = "", email = "", age, url, birthday = "", phone = "", status = "inactive", bio, address, password, confirmPassword } = req.body;
+        const body = userSchema.parse({ name, email, age, url, birthday, phone, status, bio, address, password, confirmPassword });
 
         res.json({ message: 'User created successfully', user: body });
     } catch (error) {
