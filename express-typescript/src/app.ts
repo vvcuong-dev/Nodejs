@@ -37,18 +37,39 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 const userSchema = z.object({
-    name: z.string().min(1, "Name is required"),
+    name: z.string().trim().min(1, "Name is required"),
     email: z.string()
+            .trim()
             .min(1, "Email is required")
             .pipe(z.email("Invalid email format")), // pipe nghia la sau khi validate xong chuoi thi se tiep tuc validate email
-    age: z.number().int().positive("Age must be a positive integer")
-});
+    age: z.number().int().positive("Age must be a positive integer"),
+    url: z.url("Invalid URL format").optional(),
+    birthday: z.string()
+                .trim()
+                .min(1, "Birthday is required")
+                .pipe(
+                    z.iso.date(
+                        { message: "Invalid date format, expected ISO 8601 (YYYY-MM-DD)" }
+                    )
+                ),
+    phone: z.string()
+            .trim()
+            .min(1, "Phone is required")
+            .regex(/^0\d{9}$/,  { message: "Phone number must start with 0 and be followed by 9 digits" }) 
+    });
+
+    /**
+     *  trong regex: ^ co nghia la bat dau chuoi, 0 co nghia la chu so 0, \d co nghia la mot chu so, {9} co nghia la lap lai 9 lan, $ co nghia la ket thuc chuoi
+      => regex /^0\d{9}$/ co nghia la chuoi phai bat dau bang 0, sau do phai co 9 chu so, va ket thuc chuoi
+     */
+
+
 
 app.post('/users', (req: Request, res: Response) => {
     try {
 
-        const { name = "", email = "", age } = req.body;
-        const body = userSchema.parse({ name, email, age }); // userSchema.parse nghia la validate du lieu theo schema, neu du lieu khong hop le thi se throw ra loi va vao catch
+        const { name = "", email = "", age, url, birthday = "", phone = "" } = req.body;
+        const body = userSchema.parse({ name, email, age, url, birthday, phone }); // userSchema.parse nghia la validate du lieu theo schema, neu du lieu khong hop le thi se throw ra loi va vao catch
 
         res.json({ message: 'User created successfully', user: body });
     } catch (error) {
