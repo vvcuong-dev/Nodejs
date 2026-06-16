@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import path from 'path';
 import expressLayouts from 'express-ejs-layouts';
+import * as z from "zod"
 
 const app: Application = express();
 const port: number = 3000;
@@ -31,31 +32,35 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-app.get('/', async (req: Request, res: Response) => {
-    const title = '<i>Welcome to Express with TypeScript!</i>';
-    const status = false;
-    const users = [
-        { id: 1, name: 'Alice', email: 'alice@example.com' },
-        { id: 2, name: 'Bob', email: 'bob@example.com' },
-        { id: 3, name: 'Charlie', email: 'charlie@example.com' }
-    ]
+app.get('/', (req: Request, res: Response) => {
+    res.json({ message: 'Hello, World!' });
+});
 
-    const utils = {
-        doSomething: () => {
-            return 'Doing something...';
+const userSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string()
+            .min(1, "Email is required")
+            .pipe(z.email("Invalid email format")), // pipe nghia la sau khi validate xong chuoi thi se tiep tuc validate email
+    age: z.number().int().positive("Age must be a positive integer")
+});
+
+app.post('/users', (req: Request, res: Response) => {
+    try {
+
+        const { name = "", email = "", age } = req.body;
+        const body = userSchema.parse({ name, email, age }); // userSchema.parse nghia la validate du lieu theo schema, neu du lieu khong hop le thi se throw ra loi va vao catch
+
+        res.json({ message: 'User created successfully', user: body });
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            res.status(400).json({ errors: error.issues });
+        } else {
+            res.status(500).json({ message: 'Internal Server Error' });
         }
+ 
     }
-
-    res.render('home', { title, status, users, utils });
 });
 
-app.get('/product', async (req: Request, res: Response) => {
-    res.render('product');
-});
-
-app.get('/admin', async (req: Request, res: Response) => {
-    res.render('admin/dashboard');
-});
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
