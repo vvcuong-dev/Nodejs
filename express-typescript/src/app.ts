@@ -2,7 +2,8 @@ import dotenv from 'dotenv';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import path from 'path';
 import expressLayouts from 'express-ejs-layouts';
-import routerWeb from './routes/web';
+import routerWeb from './routes/web.route';
+import { errorHandlerLingMiddleware, notFoundMiddleware } from './middlewares/error.middleware';
 
 const app: Application = express();
 const port: number = 3000;
@@ -27,6 +28,9 @@ app.use(expressLayouts);
 
 // Routes
 app.use(routerWeb);
+
+app.use(notFoundMiddleware);
+app.use(errorHandlerLingMiddleware);
 
 
 app.listen(port, () => {
