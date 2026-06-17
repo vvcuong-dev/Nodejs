@@ -6,4 +6,11 @@ export const userController = {
         const users = await userService.getUsers();
         res.json({ users });
     },
+    create: async (req: Request, res: Response) => {
+        const body = req.body;
+        const query = (req as any).validateQuery || {};
+        console.log('Received query parameters:', query);
+        console.log('Received user data:', body);
+        return res.json({ message: 'User created successfully' });
+    }
 };
