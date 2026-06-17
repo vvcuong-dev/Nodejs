@@ -8,7 +8,7 @@ export const userController = {
     },
     create: async (req: Request, res: Response) => {
         const body = req.body;
-        const query = (req as any).validateQuery || {};
+        const query = req.query;
         console.log('Received query parameters:', query);
         console.log('Received user data:', body);
         return res.json({ message: 'User created successfully' });

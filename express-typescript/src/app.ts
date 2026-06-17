@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import express, { Application, NextFunction, Request, Response } from 'express';
+import express, { Application } from 'express';
 import path from 'path';
 import expressLayouts from 'express-ejs-layouts';
 import routerWeb from './routes/web.route';

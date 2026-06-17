@@ -21,5 +21,14 @@ export const userController = {
             throw error;
         }
         res.render('users/detail', { user });
+    },
+    create(req: Request, res: Response) {
+        res.render('users/create');
+    },
+    store(req: Request, res: Response) {
+        console.log(req.body);
+
+        return res.redirect('/admin/users');
+
     }
 }

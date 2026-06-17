@@ -10,12 +10,9 @@ export default tseslint.config(
             'prefer-const': 'error', // Yêu cầu sử dụng const thay vì let nếu biến không được gán lại
              'no-unused-vars': 'off', // Cảnh báo khi có biến được khai báo nhưng không sử dụng
              '@typescript-eslint/no-unused-vars': 'warn', // Cảnh báo khi có biến TypeScript được khai báo nhưng không sử dụng
-              '@typescript-eslint/no-explicit-any': 'warn' // Tắt cảnh báo khi sử dụng kiểu any trong TypeScript
+              '@typescript-eslint/no-explicit-any': 'warn', // Tắt cảnh báo khi sử dụng kiểu any trong TypeScript,
+              "no-undef": "off", // Tắt cảnh báo khi sử dụng biến chưa được định nghĩa (vì TypeScript sẽ xử lý điều này)
         },
-        env: {
-            browser: true, // Biến toàn cục của trình duyệt
-            node: true, // Biến toàn cục của Node.js
-        }
     },
     {
         files: ['src/**/*.ts'], // Áp dụng quy tắc này chỉ cho các file TypeScript
