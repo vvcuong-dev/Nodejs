@@ -5,6 +5,7 @@ const adminRouter: Router = Router();
 
 adminRouter.get('/', dashboardController.index);
 adminRouter.get('/users', userController.index);
+adminRouter.get('/users/:email', userController.find);
 
 
 export default adminRouter;
