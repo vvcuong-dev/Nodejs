@@ -4,6 +4,7 @@ import path from 'path';
 import expressLayouts from 'express-ejs-layouts';
 import routerWeb from './routes/web.route';
 import { errorHandlerLingMiddleware, notFoundMiddleware } from './middlewares/error.middleware';
+import routerApi from './routes/api.route';
 
 const app: Application = express();
 const port: number = 3000;
@@ -28,7 +29,7 @@ app.use(expressLayouts);
 
 // Routes
 app.use(routerWeb);
-
+app.use('/api', routerApi);
 app.use(notFoundMiddleware);
 app.use(errorHandlerLingMiddleware);
 

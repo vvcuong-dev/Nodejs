@@ -4,6 +4,13 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     const isAuth = true;
 
     if (!isAuth) {
+        if (req.baseUrl.startsWith('/api')) {
+            return res.status(401).json({ 
+                success: false,
+                message: 'Unauthorized' 
+            }); 
+        }
+
         return res.redirect('/auth/login'); // chuyển hướng đến trang đăng nhập nếu chưa xác thực
     }
 

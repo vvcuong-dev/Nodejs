@@ -10,19 +10,24 @@ export const notFoundMiddleware = (req: Request, res: Response, next: NextFuncti
 };
 
 export const errorHandlerLingMiddleware = (err: ErrorWithStatus, req: Request, res: Response, next: NextFunction) => {
-    const message = err instanceof Error ? err.message : err;
+
+    let message = err instanceof Error ? err.message : err;
+    if (process.env.NODE_ENV === "production") {
+        message = '';
+    }
+
     const status = err.status || 500;
-    const url = req.url;
     
-    if (url.startsWith('/api')) {
+    if (req.url.startsWith('/api')) {
         return res.status(status).json({
             success: false,
             status: status,
-            message: message || 'Internal Server Error',
+            message: message || "Internal Server Error",
         });
+
     } else {
         return res.render('errors/errors', { 
-            message: message || 'Internal Server Error',
+            message: message || "Internal Server Error",
             status: status,
             layout: false
         });
