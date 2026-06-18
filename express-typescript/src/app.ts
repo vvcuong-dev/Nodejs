@@ -5,6 +5,8 @@ import expressLayouts from 'express-ejs-layouts';
 import routerWeb from './routes/web.route';
 import { errorHandlerLingMiddleware, notFoundMiddleware } from './middlewares/error.middleware';
 import routerApi from './routes/api.route';
+import session from 'express-session';
+import flash from 'connect-flash';
 
 const app: Application = express();
 const port: number = 3000;
@@ -25,6 +27,17 @@ app.set('layout extractScripts', true);
 // Use layouts sau cùng
 app.use(expressLayouts);
 
+app.set('trust proxy', true); // Cấu hình để Express tin tưởng proxy (nếu có)
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET as string,
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: process.env.NODE_ENV === "production" } // Chỉ gửi cookie qua HTTPS neu set secure: true, nhưng trong môi trường phát triển thường để false
+    })
+)
+
+app.use(flash());
 
 
 // Routes
