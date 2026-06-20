@@ -4,13 +4,13 @@ import { PrismaClient } from "../generated/prisma/client";
 
 const adapter = new PrismaMariaDb(process.env.DATABASE_URL as string);
 const prisma = new PrismaClient({
-    adapter,
-    omit: {
-        user: {
-            password: true,
-        }
+  adapter,
+  omit: {
+    user: {
+      password: false,
     },
-    log: ['query', 'error', 'warn'],
+  },
+  log: ["query", "error", "warn"],
 });
 
 export { prisma };

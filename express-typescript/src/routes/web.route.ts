@@ -11,6 +11,7 @@ const router: Router = Router();
 
 router.get("/", HomeController.index);
 router.get("/auth/login", guestMiddleware, authController.login);
+router.post("/auth/login", guestMiddleware, authController.handleLogin);
 router.get("/auth/register", guestMiddleware, authController.register);
 router.post(
   "/auth/register",

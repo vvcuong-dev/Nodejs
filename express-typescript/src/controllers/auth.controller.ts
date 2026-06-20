@@ -10,6 +10,18 @@ export const authController = {
       message: message,
     });
   },
+  handleLogin: async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    const isLogin = await authService.login({ email, password }, req);
+
+    if (!isLogin) {
+      req.flash("message", "Invalid email or password.");
+      req.flash("type", "error");
+      return res.redirect("/auth/login");
+    }
+
+    return res.redirect("/");
+  },
   register: (req: Request, res: Response) => {
     const errors = JSON.parse(req.flash("errors")?.[0] || "{}");
 
