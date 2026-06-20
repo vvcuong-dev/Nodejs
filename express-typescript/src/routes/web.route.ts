@@ -20,6 +20,8 @@ router.post(
   authController.handleRegister,
 );
 
+router.get("/auth/me", authMiddleware, authController.profile);
+
 router.use("/admin", authMiddleware, adminRouter);
 
 export default router;

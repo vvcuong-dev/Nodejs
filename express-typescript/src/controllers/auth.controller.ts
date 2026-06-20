@@ -39,4 +39,10 @@ export const authController = {
 
     return res.redirect("/auth/login");
   },
+  profile: (req: Request, res: Response) => {
+    const userFromRequest = req.user;
+    res.render("auth/profile", {
+      user: userFromRequest,
+    });
+  },
 };

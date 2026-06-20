@@ -45,4 +45,13 @@ export const authService = {
     req.session.user = user;
     return true;
   },
+  profile: async (userId: number) => {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    return user;
+  },
 };

@@ -5,7 +5,7 @@ export const guestMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  const isAuth = false;
+  const isAuth = req.session.user;
 
   if (isAuth) {
     return res.redirect("/admin"); // chuyển hướng đến trang chủ nếu đã xác thực
