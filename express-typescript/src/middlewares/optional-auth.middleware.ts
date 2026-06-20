@@ -6,7 +6,7 @@ export const optionalAuthMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
-  res.locals.user = null; // Đặt mặc định user là null trong res.locals
+  res.locals.user = null;
 
   if (req.session.user) {
     const userId = req.session.user.id;

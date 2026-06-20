@@ -1,12 +1,16 @@
-import { Router } from 'express';
-import { userController } from '../controllers/api/user.controller';
-import { authMiddleware } from '../middlewares/auth.middleware';
-import { userSchema } from '../validators/user.validator';
-import { validate } from '../middlewares/validate.middleware';
+import { Router } from "express";
+import { userController } from "../controllers/api/user.controller";
+import { authMiddleware } from "../middlewares/auth.middleware";
+import { userSchema } from "../validators/user.validator";
+import { validate } from "../middlewares/validate.middleware";
+import { apiAuthController } from "../controllers/api/auth.controller";
+import { loginSchema } from "../validators/auth.validator";
 
 const router: Router = Router();
 
-router.get('/users', authMiddleware, userController.index);
-router.post('/users', validate(userSchema), userController.create);
+router.post("/auth/login", validate(loginSchema), apiAuthController.login);
+
+router.get("/users", authMiddleware, userController.index);
+router.post("/users", validate(userSchema), userController.create);
 
 export default router;
