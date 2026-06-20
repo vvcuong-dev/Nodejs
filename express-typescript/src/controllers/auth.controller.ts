@@ -45,4 +45,9 @@ export const authController = {
       user: userFromRequest,
     });
   },
+  logout: (req: Request, res: Response) => {
+    delete req.session.user;
+
+    return res.redirect("/auth/login");
+  },
 };

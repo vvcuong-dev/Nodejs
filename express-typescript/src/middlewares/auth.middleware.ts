@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { authService } from "../services/auth.service";
 
 export const authMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const isAuth = req.session.user;
+  const isAuth = req.user;
 
   if (!isAuth) {
     if (req.baseUrl.startsWith("/api")) {
@@ -17,11 +16,6 @@ export const authMiddleware = async (
     }
 
     return res.redirect("/auth/login");
-  }
-
-  const user = await authService.profile(req.session.user?.id as number);
-  if (user) {
-    req.user = user;
   }
 
   next();

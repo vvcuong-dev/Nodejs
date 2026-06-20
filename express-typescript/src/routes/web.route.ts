@@ -6,8 +6,11 @@ import { guestMiddleware } from "../middlewares/guest.middleware";
 import adminRouter from "./admin.route";
 import { validate } from "../middlewares/validate.middleware";
 import { registerSchema } from "../validators/auth.validator";
+import { optionalAuthMiddleware } from "../middlewares/optional-auth.middleware";
 
 const router: Router = Router();
+
+router.use(optionalAuthMiddleware);
 
 router.get("/", HomeController.index);
 router.get("/auth/login", guestMiddleware, authController.login);
@@ -21,6 +24,7 @@ router.post(
 );
 
 router.get("/auth/me", authMiddleware, authController.profile);
+router.get("/auth/logout", authMiddleware, authController.logout);
 
 router.use("/admin", authMiddleware, adminRouter);
 

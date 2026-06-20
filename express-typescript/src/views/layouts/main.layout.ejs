@@ -9,6 +9,13 @@
   <body>
     <header>
       <h1>Đây là header của trang</h1>
+      <% if (user) { %>
+        <p class="text-blue-500">Hello, <%= user.name %>! happy you are here.</p>
+        <a class="text-blue-500 hover:text-blue-700" href="/auth/me">View Profile</a>
+        <a class="text-red-500 hover:text-red-700" href="/auth/logout">Logout</a>
+      <% } else { %>
+        <p>You are not logged in. Please <a class="text-blue-500 hover:text-blue-700" href="/auth/login">login</a> or <a class="text-blue-500 hover:text-blue-700" href="/auth/register">register</a>.</p>
+      <% } %>
     </header>
     <%- body %>
     <footer>
