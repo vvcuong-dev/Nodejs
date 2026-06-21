@@ -43,4 +43,17 @@ export const apiAuthService = {
 
     return user;
   },
+  logout: async (jti: string, userId: number) => {
+    // Xử lý logout, ví dụ: lưu jti vào blacklist để không chấp nhận token này nữa
+    // Cách đơn giản nhất là lưu jti vào một bảng trong database hoặc một cache như Redis
+    // Khi xác thực token, bạn sẽ kiểm tra xem jti có nằm trong blacklist hay không
+    const blacklist = await prisma.tokenBlacklist.create({
+      data: {
+        userId: userId,
+        jti: jti,
+      },
+    });
+
+    return blacklist;
+  },
 };

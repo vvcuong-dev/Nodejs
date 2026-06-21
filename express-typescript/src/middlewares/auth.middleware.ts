@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { apiAuthService } from "../services/api/auth.service";
+import { decodeToken } from "../utils/jwt";
+import { JWTPayload } from "../types/auth.type";
 
 export const authMiddleware = async (
   req: Request,
@@ -21,7 +23,10 @@ export const authMiddleware = async (
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
+  const decoded = decodeToken(token as string);
   req.user = user;
+  req.jti = (decoded as JWTPayload & { jti: string })?.jti;
+
   next();
 };
 

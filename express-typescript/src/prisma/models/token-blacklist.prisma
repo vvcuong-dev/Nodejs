@@ -1,0 +1,9 @@
+model TokenBlacklist {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  jti       String
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt    @db.Timestamp()
+
+  @@map("token_blacklist")
+}

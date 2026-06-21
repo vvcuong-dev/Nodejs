@@ -24,4 +24,9 @@ export const apiAuthController = {
       user: user,
     });
   },
+  logout: async (req: Request, res: Response) => {
+    await apiAuthService.logout(req.jti as string, req.user?.id as number);
+
+    res.json({ success: true, message: "Logout successful" });
+  },
 };

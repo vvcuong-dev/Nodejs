@@ -10,6 +10,7 @@ const router: Router = Router();
 
 router.post("/auth/login", validate(loginSchema), apiAuthController.login);
 router.get("/auth/me", authMiddleware, apiAuthController.profile);
+router.post("/auth/logout", authMiddleware, apiAuthController.logout);
 
 router.get("/users", authMiddleware, userController.index);
 router.post("/users", validate(userSchema), userController.create);

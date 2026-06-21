@@ -17,5 +17,6 @@ declare module "express" {
       email: string;
       password: string | null;
     };
+    jti?: string; // Thêm thuộc tính jti vào Request
   }
 }
