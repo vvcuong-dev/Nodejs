@@ -2,6 +2,7 @@ import { prisma } from "../../libs/prisma";
 import { JWTPayload, LoginData } from "../../types/auth.type";
 import { verifyPassword } from "../../utils/hash";
 import {
+  decodeToken,
   generateRefreshToken,
   generateToken,
   verifyRefreshToken,
@@ -30,6 +31,16 @@ export const apiAuthService = {
 
     const accessToken = generateToken(payload);
     const refreshToken = generateRefreshToken(payload);
+
+    // tạo refresh token trong database
+    const jtiRefreshToken = decodeToken(refreshToken);
+
+    await prisma.refreshToken.create({
+      data: {
+        userId: user.id,
+        jti: (jtiRefreshToken as { jti: string })?.jti as string,
+      },
+    });
 
     return { accessToken: accessToken, refreshToken: refreshToken };
   },
@@ -71,6 +82,17 @@ export const apiAuthService = {
     const decoded = verifyRefreshToken(refreshToken);
 
     if (!decoded) {
+      return false;
+    }
+
+    // Kiểm tra refresh token trong database
+    const jti = (decoded as JWTPayload & { jti: string })?.jti;
+    const userId = decoded.userId;
+    const existingRefreshToken = await prisma.refreshToken.count({
+      where: { jti, userId },
+    });
+
+    if (!existingRefreshToken) {
       return false;
     }
 

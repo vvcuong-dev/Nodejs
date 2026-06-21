@@ -1,0 +1,9 @@
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  jti       String   @unique
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt    @db.Timestamp()
+
+  @@map("refresh_tokens")
+}
