@@ -29,9 +29,3 @@ export const authMiddleware = async (
 
   next();
 };
-
-// khi redirect phải chú ý đường dẫn phải có dấu / ở đầu, nếu không sẽ bị lỗi khi redirect từ các trang con như /admin/users sẽ redirect đến /admin/auth/login thay vì /auth/login
-
-// slice(-1) mặc định sẽ lấy phần tử cuối cùng của mảng
-
-// VD: "Bearer token" => ["Bearer", "token"] => slice(-1) => ["token"] => join() => "token"

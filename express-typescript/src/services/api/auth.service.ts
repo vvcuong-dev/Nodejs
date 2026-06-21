@@ -1,5 +1,5 @@
 import { prisma } from "../../libs/prisma";
-import { LoginData } from "../../types/auth.type";
+import { JWTPayload, LoginData } from "../../types/auth.type";
 import { verifyPassword } from "../../utils/hash";
 import { generateToken, verifyToken } from "../../utils/jwt";
 
@@ -25,12 +25,15 @@ export const apiAuthService = {
   getProfile: async (token: string) => {
     const decoded = verifyToken(token);
 
-    /**
-     * decoded là một đối tượng chứa thông tin giải mã từ token, bao gồm userId và email. Nếu token không hợp lệ hoặc hết hạn, decoded sẽ là false.
-     * Nếu decoded là false, nghĩa là token không hợp lệ hoặc hết hạn, nên hàm sẽ trả về false.
-     */
-
     if (!decoded) {
+      return false;
+    }
+
+    // Kiểm tra blacklist
+    const jti = (decoded as JWTPayload & { jti: string })?.jti;
+    const blacklist = await prisma.tokenBlacklist.findFirst({ where: { jti } });
+
+    if (blacklist) {
       return false;
     }
 
@@ -44,9 +47,6 @@ export const apiAuthService = {
     return user;
   },
   logout: async (jti: string, userId: number) => {
-    // Xử lý logout, ví dụ: lưu jti vào blacklist để không chấp nhận token này nữa
-    // Cách đơn giản nhất là lưu jti vào một bảng trong database hoặc một cache như Redis
-    // Khi xác thực token, bạn sẽ kiểm tra xem jti có nằm trong blacklist hay không
     const blacklist = await prisma.tokenBlacklist.create({
       data: {
         userId: userId,
