@@ -15,4 +15,13 @@ export const apiAuthController = {
 
     res.json({ success: true, message: "Login successful", token });
   },
+  profile: (req: Request, res: Response) => {
+    const user = req.user;
+
+    res.json({
+      success: true,
+      message: "Profile retrieved successfully",
+      user: user,
+    });
+  },
 };

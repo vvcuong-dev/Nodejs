@@ -10,7 +10,12 @@ export const generateToken = (data: JWTPayload) => {
 export const verifyToken = (token: string) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET as string);
-    return decoded;
+
+    if (typeof decoded === "string") {
+      return false;
+    }
+
+    return decoded as JWTPayload;
   } catch {
     return false;
   }

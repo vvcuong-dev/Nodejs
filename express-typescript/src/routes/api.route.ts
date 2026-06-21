@@ -9,6 +9,7 @@ import { loginSchema } from "../validators/auth.validator";
 const router: Router = Router();
 
 router.post("/auth/login", validate(loginSchema), apiAuthController.login);
+router.get("/auth/me", authMiddleware, apiAuthController.profile);
 
 router.get("/users", authMiddleware, userController.index);
 router.post("/users", validate(userSchema), userController.create);
