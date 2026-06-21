@@ -29,4 +29,27 @@ export const apiAuthController = {
 
     res.json({ success: true, message: "Logout successful" });
   },
+  refreshToken: async (req: Request, res: Response) => {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Refresh token is required" });
+    }
+
+    const newToken = await apiAuthService.refreshToken(refreshToken);
+
+    if (!newToken) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid refresh token" });
+    }
+
+    res.json({
+      success: true,
+      message: "Token refreshed successfully",
+      token: newToken,
+    });
+  },
 };

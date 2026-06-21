@@ -12,6 +12,8 @@ router.post("/auth/login", validate(loginSchema), apiAuthController.login);
 router.get("/auth/me", authMiddleware, apiAuthController.profile);
 router.post("/auth/logout", authMiddleware, apiAuthController.logout);
 
+router.post("/auth/refresh-token", apiAuthController.refreshToken);
+
 router.get("/users", authMiddleware, userController.index);
 router.post("/users", validate(userSchema), userController.create);
 

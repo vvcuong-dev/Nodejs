@@ -1,7 +1,12 @@
 import { prisma } from "../../libs/prisma";
 import { JWTPayload, LoginData } from "../../types/auth.type";
 import { verifyPassword } from "../../utils/hash";
-import { generateToken, verifyToken } from "../../utils/jwt";
+import {
+  generateRefreshToken,
+  generateToken,
+  verifyRefreshToken,
+  verifyToken,
+} from "../../utils/jwt";
 
 export const apiAuthService = {
   login: async (data: LoginData) => {
@@ -18,9 +23,15 @@ export const apiAuthService = {
     }
 
     // Tạo token
-    const token = generateToken({ userId: user.id, email: user.email });
+    const payload = {
+      userId: user.id,
+      email: user.email,
+    };
 
-    return token;
+    const accessToken = generateToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    return { accessToken: accessToken, refreshToken: refreshToken };
   },
   getProfile: async (token: string) => {
     const decoded = verifyToken(token);
@@ -55,5 +66,21 @@ export const apiAuthService = {
     });
 
     return blacklist;
+  },
+  refreshToken: async (refreshToken: string) => {
+    const decoded = verifyRefreshToken(refreshToken);
+
+    if (!decoded) {
+      return false;
+    }
+
+    const payload = {
+      userId: decoded.userId,
+      email: decoded.email,
+    };
+
+    const accessToken = generateToken(payload);
+
+    return { accessToken: accessToken, refreshToken: refreshToken };
   },
 };
