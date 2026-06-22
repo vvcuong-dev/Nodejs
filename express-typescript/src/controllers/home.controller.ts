@@ -1,16 +1,21 @@
 import { Request, Response } from "express";
-import { mailService } from "../services/mail.service";
+import { sendMailOrder } from "../mail/send-mail-order";
 
 export const HomeController = {
   index: async (req: Request, res: Response) => {
     return res.render("home");
   },
   testMail: async (req: Request, res: Response) => {
-    const info = await mailService.sendMail(
-      "berapo6360@afterdo.com",
-      "Test Subject",
-      "<p>This is a test email.</p>",
+    const data = {
+      name: "dganm",
+      orderId: "OD-12345",
+    };
+
+    await sendMailOrder.send(
+      "mibiv91148@aratrin.com",
+      "Order Confirmation",
+      data,
     );
-    return res.send(info);
+    return res.json({ message: "Email sent successfully!" });
   },
 };
