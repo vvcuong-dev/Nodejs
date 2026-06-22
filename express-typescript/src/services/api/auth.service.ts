@@ -88,11 +88,11 @@ export const apiAuthService = {
     // Kiểm tra refresh token trong database
     const jti = (decoded as JWTPayload & { jti: string })?.jti;
     const userId = decoded.userId;
-    const existingRefreshToken = await prisma.refreshToken.count({
+    const refreshTokenFromDB = await prisma.refreshToken.findFirst({
       where: { jti, userId },
     });
 
-    if (!existingRefreshToken) {
+    if (!refreshTokenFromDB) {
       return false;
     }
 
@@ -101,8 +101,21 @@ export const apiAuthService = {
       email: decoded.email,
     };
 
-    const accessToken = generateToken(payload);
+    const newAccessToken = generateToken(payload);
+    const newRefreshToken = generateRefreshToken(payload);
+    const jtiNewRefreshToken = decodeToken(newRefreshToken);
 
-    return { accessToken: accessToken, refreshToken: refreshToken };
+    // Tạo refresh token mới trong database
+    await prisma.refreshToken.create({
+      data: {
+        userId: decoded.userId,
+        jti: (jtiNewRefreshToken as { jti: string })?.jti as string,
+      },
+    });
+
+    // Xóa refresh token cũ trong database
+    await prisma.refreshToken.delete({ where: { id: refreshTokenFromDB.id } });
+
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   },
 };
