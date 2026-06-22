@@ -2,6 +2,7 @@ model RefreshToken {
   id        Int      @id @default(autoincrement())
   userId    Int
   jti       String   @unique
+  ttl       DateTime? @db.Timestamp()
   createdAt DateTime @default(now()) @db.Timestamp()
   updatedAt DateTime @updatedAt    @db.Timestamp()
 

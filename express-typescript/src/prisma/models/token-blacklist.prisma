@@ -1,6 +1,7 @@
 model TokenBlacklist {
   id        Int      @id @default(autoincrement())
   userId    Int
+  ttl       DateTime? @db.Timestamp()
   jti       String   @unique
   createdAt DateTime @default(now()) @db.Timestamp()
   updatedAt DateTime @updatedAt    @db.Timestamp()

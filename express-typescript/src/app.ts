@@ -3,6 +3,7 @@ import express, { Application } from "express";
 import path from "path";
 import expressLayouts from "express-ejs-layouts";
 import routerWeb from "./routes/web.route";
+import "./schedulers";
 import {
   errorHandlerLingMiddleware,
   notFoundMiddleware,
@@ -11,7 +12,6 @@ import routerApi from "./routes/api.route";
 import session from "express-session";
 import flash from "connect-flash";
 import morgan from "morgan";
-
 const app: Application = express();
 const port: number = 3000;
 

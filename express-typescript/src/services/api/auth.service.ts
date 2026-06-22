@@ -33,12 +33,15 @@ export const apiAuthService = {
     const refreshToken = generateRefreshToken(payload);
 
     // tạo refresh token trong database
-    const jtiRefreshToken = decodeToken(refreshToken);
+    const decodeRefreshToken = decodeToken(refreshToken);
 
     await prisma.refreshToken.create({
       data: {
         userId: user.id,
-        jti: (jtiRefreshToken as { jti: string })?.jti as string,
+        jti: (decodeRefreshToken as { jti: string })?.jti as string,
+        ttl: new Date(
+          (decodeRefreshToken as JWTPayload & { exp: number })?.exp * 1000,
+        ),
       },
     });
 
@@ -68,11 +71,14 @@ export const apiAuthService = {
 
     return user;
   },
-  logout: async (jti: string, userId: number) => {
+  logout: async (token: string, userId: number) => {
+    const decoded = verifyToken(token);
+
     const blacklist = await prisma.tokenBlacklist.create({
       data: {
         userId: userId,
-        jti: jti,
+        jti: (decoded as JWTPayload & { jti: string })?.jti as string,
+        ttl: new Date((decoded as JWTPayload & { exp: number })?.exp * 1000),
       },
     });
 
@@ -103,13 +109,16 @@ export const apiAuthService = {
 
     const newAccessToken = generateToken(payload);
     const newRefreshToken = generateRefreshToken(payload);
-    const jtiNewRefreshToken = decodeToken(newRefreshToken);
+    const decodeRefreshToken = decodeToken(newRefreshToken);
 
     // Tạo refresh token mới trong database
     await prisma.refreshToken.create({
       data: {
         userId: decoded.userId,
-        jti: (jtiNewRefreshToken as { jti: string })?.jti as string,
+        jti: (decodeRefreshToken as { jti: string })?.jti as string,
+        ttl: new Date(
+          (decodeRefreshToken as JWTPayload & { exp: number })?.exp * 1000,
+        ),
       },
     });
 
@@ -117,5 +126,25 @@ export const apiAuthService = {
     await prisma.refreshToken.delete({ where: { id: refreshTokenFromDB.id } });
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  },
+  cleanBacklist: async () => {
+    const now = new Date();
+    await prisma.tokenBlacklist.deleteMany({
+      where: {
+        ttl: {
+          lte: now,
+        },
+      },
+    });
+  },
+  cleanRefreshToken: async () => {
+    const now = new Date();
+    await prisma.refreshToken.deleteMany({
+      where: {
+        ttl: {
+          lte: now,
+        },
+      },
+    });
   },
 };
