@@ -26,6 +26,8 @@ router.post(
 router.get("/auth/me", authMiddleware, authController.profile);
 router.get("/auth/logout", authMiddleware, authController.logout);
 
+router.get("/test-mail", HomeController.testMail);
+
 router.use("/admin", authMiddleware, adminRouter);
 
 export default router;
