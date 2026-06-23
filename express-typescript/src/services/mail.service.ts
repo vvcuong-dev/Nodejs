@@ -1,27 +1,12 @@
-import nodemailer from "nodemailer";
-
-const SMTP_HOST = process.env.SMTP_HOST;
-const SMTP_USERNAME = process.env.SMTP_USERNAME;
-const SMTP_PASSWORD = process.env.SMTP_PASSWORD;
-const SMTP_PORT = Number(process.env.SMTP_PORT);
-const SMTP_SECURE = process.env.SMTP_SECURE;
-const SMTP_FROM = process.env.SMTP_FROM;
-const SMTP_FROM_NAME = process.env.SMTP_FROM_NAME;
-
-const transporter = nodemailer.createTransport({
-  host: SMTP_HOST,
-  port: SMTP_PORT,
-  secure: SMTP_SECURE === "ssl", // true for 465, false for other ports
-  auth: {
-    user: SMTP_USERNAME,
-    pass: SMTP_PASSWORD,
-  },
-});
+import path from "path/win32";
+import ejs from "ejs";
+import { mailConfig } from "../../configs/mail.config";
+import { transporter } from "../mail/mail.transporter";
 
 export const mailService = {
   sendMail: async (to: string, subject: string, message: string) => {
     const info = await transporter.sendMail({
-      from: `"${SMTP_FROM_NAME}" <${SMTP_FROM}>`,
+      from: `"${mailConfig.fromName}" <${mailConfig.from}>`,
       to: to,
       subject: subject,
       html: message,
@@ -29,4 +14,23 @@ export const mailService = {
 
     return info;
   },
+  async sendWithTemplate(
+    to: string,
+    subject: string,
+    template: string,
+    options: { [key: string]: string },
+  ) {
+    const viewRoot = path.join(__dirname, "..", "views");
+    const templatePath = path.join(viewRoot, template + ".ejs");
+    try {
+      const data = await ejs.renderFile(templatePath, options);
+      return await mailService.sendMail(to, subject, data as string);
+    } catch {
+      return false;
+    }
+  },
 };
+
+// join như vậy để đảm bảo đường dẫn đúng trên cả Windows và Linux, các ví dụ trước đó dùng path.join(__dirname, "../views") sẽ không chạy được trên Windows
+// hiểu đơn giản path.join(__dirname, "..", "views") sẽ tạo ra đường dẫn tuyệt đối đến thư mục views từ vị trí hiện tại của file mail.service.ts
+// ví dụ: nếu __dirname là "D:\Nodejs\express-typescript\src\services" thì viewRoot sẽ là "D:\Nodejs\express-typescript\src\views"

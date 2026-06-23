@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { sendMailOrder } from "../mail/send-mail-order";
+import { CreateOrder } from "../mail/create-order.mail";
+import { MailData } from "../types/mail.type";
 
 export const HomeController = {
   index: async (req: Request, res: Response) => {
@@ -7,15 +8,25 @@ export const HomeController = {
   },
   testMail: async (req: Request, res: Response) => {
     const data = {
-      name: "dganm",
+      name: "John Doe Zin",
       orderId: "OD-12345",
     };
 
-    await sendMailOrder.send(
-      "mibiv91148@aratrin.com",
-      "Order Confirmation",
-      data,
-    );
-    return res.json({ message: "Email sent successfully!" });
+    const info = new CreateOrder<MailData>({
+      info: {
+        to: "mibiv91148@aratrin.com",
+        subject: "Order Confirmation",
+      },
+      options: {
+        name: data.name,
+        orderId: data.orderId,
+      },
+    });
+
+    await info.send();
+
+    res.json({
+      message: "Email sent successfully",
+    });
   },
 };
