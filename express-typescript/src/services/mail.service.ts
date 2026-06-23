@@ -1,6 +1,6 @@
 import path from "path/win32";
 import ejs from "ejs";
-import { mailConfig } from "../../configs/mail.config";
+import { mailConfig } from "../configs/mail.config";
 import { transporter } from "../mail/mail.transporter";
 
 export const mailService = {
