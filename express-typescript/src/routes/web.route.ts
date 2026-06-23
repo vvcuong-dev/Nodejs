@@ -26,8 +26,12 @@ router.post(
 router.get("/auth/me", authMiddleware, authController.profile);
 router.get("/auth/logout", authMiddleware, authController.logout);
 
+// Test route for email sending
 router.get("/test-mail", HomeController.testMail);
 router.get("/tracking", HomeController.linkTracking);
+
+// Test route for Redis
+router.get("/test-redis", HomeController.testRedis);
 
 router.use("/admin", authMiddleware, adminRouter);
 

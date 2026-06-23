@@ -1,10 +1,6 @@
 import jwt from "jsonwebtoken";
 import { JWTPayload } from "../types/auth.type";
-
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
-const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN;
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+import { jwtConfig } from "../configs/jwt.config";
 
 export const generateToken = (data: JWTPayload) => {
   return jwt.sign(
@@ -12,16 +8,16 @@ export const generateToken = (data: JWTPayload) => {
       jti: crypto.randomUUID(), // Tạo một UUID ngẫu nhiên để làm jti (JWT ID) ví dụ: "550e8400-e29b-41d4-a716-446655440000" or "550e8400-e29b-41d4-a716-446655440000"
       ...data,
     },
-    JWT_SECRET as string,
+    jwtConfig.jwtSecret as string,
     {
-      expiresIn: JWT_EXPIRES_IN as unknown as number,
+      expiresIn: jwtConfig.expiresIn as unknown as number,
     },
   );
 };
 
 export const verifyToken = (token: string) => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET as string);
+    const decoded = jwt.verify(token, jwtConfig.jwtSecret as string);
 
     if (typeof decoded === "string") {
       return false;
@@ -43,16 +39,16 @@ export const generateRefreshToken = (data: JWTPayload) => {
       jti: crypto.randomUUID(),
       ...data,
     },
-    JWT_REFRESH_SECRET as string,
+    jwtConfig.refreshSecret as string,
     {
-      expiresIn: JWT_REFRESH_EXPIRES_IN as unknown as number,
+      expiresIn: jwtConfig.refreshExpiresIn as unknown as number,
     },
   );
 };
 
 export const verifyRefreshToken = (token: string) => {
   try {
-    const decoded = jwt.verify(token, JWT_REFRESH_SECRET as string);
+    const decoded = jwt.verify(token, jwtConfig.refreshSecret as string);
 
     if (typeof decoded === "string") {
       return false;
