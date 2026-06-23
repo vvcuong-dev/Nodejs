@@ -23,8 +23,25 @@ export const mailService = {
     const viewRoot = path.join(__dirname, "..", "views");
     const templatePath = path.join(viewRoot, template + ".ejs");
     try {
-      const data = await ejs.renderFile(templatePath, options);
-      return await mailService.sendMail(to, subject, data as string);
+      let data = await ejs.renderFile(templatePath, options);
+
+      const matches = data.match(
+        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._/+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_/+.~#?&//=]*)/gi,
+      );
+
+      if (matches && matches.length > 0) {
+        matches.forEach((urlFromData) => {
+          if (urlFromData) {
+            const url = `http://localhost:3000/tracking?url=${urlFromData}&mailId=1`;
+            data = data.replace(
+              urlFromData,
+              `<a href="${url}" target="_blank">${urlFromData}</a>`,
+            );
+          }
+        });
+      }
+
+      return await this.sendMail(to, subject, data as string);
     } catch {
       return false;
     }

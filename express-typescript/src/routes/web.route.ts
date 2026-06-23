@@ -27,6 +27,7 @@ router.get("/auth/me", authMiddleware, authController.profile);
 router.get("/auth/logout", authMiddleware, authController.logout);
 
 router.get("/test-mail", HomeController.testMail);
+router.get("/tracking", HomeController.linkTracking);
 
 router.use("/admin", authMiddleware, adminRouter);
 

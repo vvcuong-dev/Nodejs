@@ -14,7 +14,7 @@ export const HomeController = {
 
     const info = new CreateOrder<MailData>({
       info: {
-        to: "mibiv91148@aratrin.com",
+        to: "vucuong10a12cmb1920@gmail.com",
         subject: "Order Confirmation",
       },
       options: {
@@ -28,5 +28,17 @@ export const HomeController = {
     res.json({
       message: "Email sent successfully",
     });
+  },
+  linkTracking: async (req: Request, res: Response) => {
+    const url = req.query.url as string;
+    const mailId = req.query.mailId as string;
+
+    if (url) {
+      console.log("user đã click vào link: ", mailId);
+
+      return res.redirect(url as string);
+    }
+
+    return res.redirect("/");
   },
 };
