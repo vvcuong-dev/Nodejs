@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate.middleware";
 import { apiAuthController } from "../controllers/api/auth.controller";
-import { loginSchema } from "../validators/auth.validator";
+import { loginSchema, registerSchema } from "../validators/auth.validator";
 import { apiUserController } from "../controllers/api/user.controller";
 
 const router: Router = Router();
@@ -13,5 +13,7 @@ router.post("/auth/logout", authMiddleware, apiAuthController.logout);
 router.post("/auth/refresh-token", apiAuthController.refreshToken);
 
 router.get("/users", apiUserController.index);
+router.get("/users/:id", apiUserController.find);
+router.post("/users", validate(registerSchema), apiUserController.create);
 
 export default router;

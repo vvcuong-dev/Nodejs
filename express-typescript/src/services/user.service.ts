@@ -1,13 +1,34 @@
 import { prisma } from "../libs/prisma";
 import { userRepository } from "../repositories/user.repository";
+import { hashPassword } from "../utils/hash";
 import { cacheService } from "./cache.service";
 
 export const userService = {
   getUsers: async () => {
-    return cacheService.getOrSet("users:list", () => prisma.user.findMany());
+    return cacheService.getOrSet("users:list", prisma.user.findMany);
   },
-  getUserByEmail: async (email: string) => {
-    const user = await userRepository.findByEmail(email);
+  getUserById: async (id: number) => {
+    return cacheService.getOrSet(`users:detail:${id}`, () =>
+      userRepository.findById(id),
+    );
+  },
+  createUser: async (data: {
+    name: string;
+    email: string;
+    password: string;
+  }) => {
+    const user = await prisma.user.create({
+      data: {
+        ...data,
+        password: hashPassword(data.password),
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    await cacheService.delete("users:list");
     return user;
   },
 };

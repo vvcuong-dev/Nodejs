@@ -24,4 +24,7 @@ export const cacheService = {
 
     return freshData;
   },
+  async delete(key: string): Promise<void> {
+    await redis.del(key);
+  },
 };
