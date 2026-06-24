@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
 import { CreateOrder } from "../mail/create-order.mail";
 import { MailData } from "../types/mail.type";
-import { redisClient } from "../utils/redis";
+import { pubSubRedis } from "../utils/redis";
 
-const redis = redisClient.getInstance();
+// import { redisClient } from "../utils/redis";
+// const redis = redisClient.getInstance();
+
+const pubSubClient = pubSubRedis.getInstance();
 
 export const HomeController = {
   index: async (req: Request, res: Response) => {
@@ -48,16 +51,19 @@ export const HomeController = {
     // const result = await redis.set("name", "Cuongvv");
     // const value = await redis.get("name");
 
-    const result = await redis.hSet("user:1", {
-      name: "Cuongvv",
-      email: "cuongvudev@gmail.com",
-    });
-    const value = await redis.hGetAll("user:1");
+    // const result = await redis.hSet("user:1", {
+    //   name: "Cuongvv",
+    //   email: "cuongvudev@gmail.com",
+    // });
+    // const value = await redis.hGetAll("user:1");
+
+    await pubSubClient.pubClient?.publish(
+      "new-order",
+      "Hello from Redis Pub/Sub!",
+    );
 
     res.json({
       message: "Redis test route",
-      result: result,
-      value: value,
     });
   },
 };

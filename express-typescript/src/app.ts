@@ -4,6 +4,7 @@ import path from "path";
 import expressLayouts from "express-ejs-layouts";
 import routerWeb from "./routes/web.route";
 import "./schedulers";
+import "./subscribers/order.subscribe";
 import {
   errorHandlerLingMiddleware,
   notFoundMiddleware,
