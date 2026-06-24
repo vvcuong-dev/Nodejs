@@ -34,4 +34,25 @@ export const apiUserController = {
       data: user,
     });
   },
+  update: async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name, email } = req.body;
+
+    const user = await userService.updateUser({
+      id: Number(id),
+      name: name,
+      email: email,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      message: "User updated",
+      data: user,
+    });
+  },
 };

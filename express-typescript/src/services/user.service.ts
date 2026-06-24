@@ -31,4 +31,21 @@ export const userService = {
     await cacheService.delete("users:list");
     return user;
   },
+  updateUser: async (data: { id: number; name: string; email: string }) => {
+    const user = await prisma.user.update({
+      where: { id: data.id },
+      data: {
+        name: data.name,
+        email: data.email,
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    await cacheService.delete(`users:detail:${data.id}`);
+    await cacheService.delete("users:list");
+    return user;
+  },
 };
