@@ -27,4 +27,16 @@ export const cacheService = {
   async delete(key: string): Promise<void> {
     await redis.del(key);
   },
+  async deleteByPattern(pattern: string): Promise<void> {
+    const keys = redis.scanIterator({
+      TYPE: "string",
+      MATCH: pattern,
+    });
+
+    // (giải thích: redis.scanIterator trả về một async iterator, vì vậy chúng ta có thể sử dụng vòng lặp for-await-of để lặp qua các khóa)
+
+    for await (const key of keys) {
+      await redis.del(key);
+    }
+  },
 };

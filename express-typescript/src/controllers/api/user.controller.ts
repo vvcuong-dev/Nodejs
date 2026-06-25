@@ -3,7 +3,7 @@ import { userService } from "../../services/user.service";
 
 export const apiUserController = {
   index: async (req: Request, res: Response) => {
-    const user = await userService.getUsers();
+    const user = await userService.getUsers(req);
 
     res.json({
       message: "User index",
@@ -52,6 +52,22 @@ export const apiUserController = {
 
     res.json({
       message: "User updated",
+      data: user,
+    });
+  },
+  delete: async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const user = await userService.deleteUser(Number(id));
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      message: "User deleted",
       data: user,
     });
   },

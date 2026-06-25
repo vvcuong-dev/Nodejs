@@ -16,5 +16,6 @@ router.get("/users", apiUserController.index);
 router.get("/users/:id", apiUserController.find);
 router.post("/users", validate(registerSchema), apiUserController.create);
 router.put("/users/:id", apiUserController.update);
+router.delete("/users/:id", apiUserController.delete);
 
 export default router;

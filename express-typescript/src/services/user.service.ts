@@ -1,11 +1,34 @@
+import { Request } from "express";
 import { prisma } from "../libs/prisma";
 import { userRepository } from "../repositories/user.repository";
 import { hashPassword } from "../utils/hash";
 import { cacheService } from "./cache.service";
 
 export const userService = {
-  getUsers: async () => {
-    return cacheService.getOrSet("users:list", prisma.user.findMany);
+  getUsers: async (req: Request) => {
+    const { q = "" } = req.query as { q: string };
+
+    let cacheKey = "users:list";
+    if (q) {
+      cacheKey = `users:list:query:${q}`;
+    }
+
+    return cacheService.getOrSet(cacheKey, () =>
+      prisma.user.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: q,
+              },
+              email: {
+                contains: q,
+              },
+            },
+          ],
+        },
+      }),
+    );
   },
   getUserById: async (id: number) => {
     return cacheService.getOrSet(`users:detail:${id}`, () =>
@@ -45,7 +68,19 @@ export const userService = {
     }
 
     await cacheService.delete(`users:detail:${data.id}`);
-    await cacheService.delete("users:list");
+    await cacheService.deleteByPattern("users:list*");
+    return user;
+  },
+  deleteUser: async (id: number) => {
+    const user = await prisma.user.delete({
+      where: { id },
+    });
+
+    if (user) {
+      await cacheService.delete(`users:detail:${id}`);
+      await cacheService.deleteByPattern("users:list*");
+    }
+
     return user;
   },
 };
