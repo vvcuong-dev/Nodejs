@@ -39,4 +39,21 @@ export const cacheService = {
       await redis.del(key);
     }
   },
+  async tagVersion(tagName: string) {
+    const versionKey = `tag:${tagName}:version`;
+    let version = await redis.get(versionKey);
+
+    if (!version) {
+      version = "1";
+      await redis.set(versionKey, version);
+    }
+
+    return version;
+  },
+  async invalidateTagVersion(tagName: string) {
+    const versionKey = `tag:${tagName}:version`;
+    const newVersion = await redis.incr(versionKey);
+
+    return newVersion;
+  },
 };

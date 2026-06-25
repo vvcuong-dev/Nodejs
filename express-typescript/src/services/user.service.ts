@@ -7,10 +7,11 @@ import { cacheService } from "./cache.service";
 export const userService = {
   getUsers: async (req: Request) => {
     const { q = "" } = req.query as { q: string };
+    const listTagVersion = await cacheService.tagVersion("list-version");
 
-    let cacheKey = "users:list";
+    let cacheKey = `users:list:${listTagVersion}`;
     if (q) {
-      cacheKey = `users:list:query:${q}`;
+      cacheKey = `users:list:${listTagVersion}:query:${q}`;
     }
 
     return cacheService.getOrSet(cacheKey, () =>
@@ -68,7 +69,8 @@ export const userService = {
     }
 
     await cacheService.delete(`users:detail:${data.id}`);
-    await cacheService.deleteByPattern("users:list*");
+    // await cacheService.deleteByPattern("users:list*");
+    await cacheService.invalidateTagVersion("list-version");
     return user;
   },
   deleteUser: async (id: number) => {
@@ -78,7 +80,8 @@ export const userService = {
 
     if (user) {
       await cacheService.delete(`users:detail:${id}`);
-      await cacheService.deleteByPattern("users:list*");
+      // await cacheService.deleteByPattern("users:list*");
+      await cacheService.invalidateTagVersion("list-version");
     }
 
     return user;
