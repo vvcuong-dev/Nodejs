@@ -38,11 +38,13 @@ export const apiUserController = {
     const { id } = req.params;
     const { name, email } = req.body;
 
-    const user = await userService.updateUser({
-      id: Number(id),
-      name: name,
-      email: email,
-    });
+    const user = await userService.updateUser(
+      {
+        name: name,
+        email: email,
+      },
+      Number(id),
+    );
 
     if (!user) {
       return res.status(404).json({
