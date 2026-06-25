@@ -1,21 +1,25 @@
 import { Request } from "express";
 import { prisma } from "../libs/prisma";
-import { userRepository } from "../repositories/user.repository";
 import { hashPassword } from "../utils/hash";
 import { cacheService } from "./cache.service";
+
+const USER_CACHE_VERSION = "1.1";
 
 export const userService = {
   getUsers: async (req: Request) => {
     const { q = "" } = req.query as { q: string };
     const listTagVersion = await cacheService.tagVersion("list-version");
 
-    let cacheKey = `users:list:${listTagVersion}`;
+    let cacheKey = `users:${USER_CACHE_VERSION}:list:${listTagVersion}`;
     if (q) {
-      cacheKey = `users:list:${listTagVersion}:query:${q}`;
+      cacheKey = `users:${USER_CACHE_VERSION}:list:${listTagVersion}:query:${q}`;
     }
 
     return cacheService.getOrSet(cacheKey, () =>
       prisma.user.findMany({
+        omit: {
+          password: true,
+        },
         where: {
           OR: [
             {
@@ -28,12 +32,25 @@ export const userService = {
             },
           ],
         },
+        orderBy: {
+          id: "asc",
+        },
       }),
     );
   },
   getUserById: async (id: number) => {
-    return cacheService.getOrSet(`users:detail:${id}`, () =>
-      userRepository.findById(id),
+    return cacheService.getOrSet(
+      `users:${USER_CACHE_VERSION}:detail:${id}`,
+      () =>
+        prisma.user.findUnique({
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            createdAt: true,
+          },
+          where: { id },
+        }),
     );
   },
   createUser: async (data: {
@@ -52,7 +69,7 @@ export const userService = {
       return null;
     }
 
-    await cacheService.delete("users:list");
+    await cacheService.delete(`users:${USER_CACHE_VERSION}:list`);
     return user;
   },
   updateUser: async (data: { id: number; name: string; email: string }) => {
@@ -68,7 +85,7 @@ export const userService = {
       return null;
     }
 
-    await cacheService.delete(`users:detail:${data.id}`);
+    await cacheService.delete(`users:${USER_CACHE_VERSION}:detail:${data.id}`);
     // await cacheService.deleteByPattern("users:list*");
     await cacheService.invalidateTagVersion("list-version");
     return user;
@@ -79,9 +96,9 @@ export const userService = {
     });
 
     if (user) {
-      await cacheService.delete(`users:detail:${id}`);
+      await cacheService.delete(`users:${USER_CACHE_VERSION}:list`);
       // await cacheService.deleteByPattern("users:list*");
-      await cacheService.invalidateTagVersion("list-version");
+      await cacheService.delete(`users:${USER_CACHE_VERSION}:detail:${id}`);
     }
 
     return user;
