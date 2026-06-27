@@ -1,4 +1,5 @@
 import { createClient, RedisClientType } from "redis";
+import { redsisConfig } from "../configs/redis.config";
 
 type RedisClient = {
   client: RedisClientType | null;
@@ -9,7 +10,7 @@ export const redisClient: RedisClient = {
   client: null,
 
   getInstance() {
-    const url = `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`;
+    const url = `redis://${redsisConfig.host}:${redsisConfig.port}`;
 
     if (!this.client) {
       this.client = createClient({
@@ -40,7 +41,7 @@ export const pubSubRedis: ReidsPubSub = {
   subClient: null,
 
   getInstance() {
-    const url = `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`;
+    const url = `redis://${redsisConfig.host}:${redsisConfig.port}`;
 
     if (!this.pubClient) {
       this.pubClient = createClient({

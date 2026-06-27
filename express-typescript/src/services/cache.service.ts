@@ -102,6 +102,8 @@ export const cacheService = {
         MATCH: `${prefix}*`,
         COUNT: 100,
       });
+      // trả về một mảng [cursor, keys] trong đó cursor là con trỏ mới và keys là danh sách các key tìm được
+      // cursor là "0" khi đã quét hết tất cả các key, nếu không thì trả về con trỏ mới để tiếp tục quét
 
       cursor = reply.cursor;
       const foundTags = reply.keys;
