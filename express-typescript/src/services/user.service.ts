@@ -1,14 +1,27 @@
+import { Request } from "express";
+import crypto from "crypto";
 import { prisma } from "../libs/prisma";
 import { hashPassword } from "../utils/hash";
 import { cacheService } from "./cache.service";
 import { CACHE } from "../constants/cache.constant";
 
 export const userService = {
-  getUsers: async () => {
+  getUsers: async (req: Request) => {
+    const { page = 1, limit = 3, ...filter } = req.query;
+
+    let hashFilters = "";
+
+    if (Object.keys(filter).length > 0) {
+      hashFilters = crypto
+        .createHash("md5")
+        .update(JSON.stringify(filter))
+        .digest("hex");
+    }
+
     return cacheService.getOrSetWithTag(
-      CACHE.USER._KEY.LIST(),
+      CACHE.USER._KEY.LIST(limit as number, page as number, hashFilters),
       () => prisma.user.findMany({}),
-      CACHE.USER.TAGS.ROOT(),
+      CACHE.USER.TAGS.LIST(),
     );
   },
   getUserById: async (id: number) => {
@@ -50,7 +63,8 @@ export const userService = {
     });
 
     if (user) {
-      await cacheService.invalidateTags(CACHE.USER.TAGS.ROOT());
+      await cacheService.invalidateTags(CACHE.USER.TAGS.DETAIL(id.toString()));
+      await cacheService.invalidateTags(CACHE.USER.TAGS.LIST());
     }
 
     return user;
@@ -61,7 +75,8 @@ export const userService = {
     });
 
     if (user) {
-      await cacheService.invalidateTags(CACHE.USER.TAGS.ROOT());
+      await cacheService.invalidateTags(CACHE.USER.TAGS.DETAIL(id.toString()));
+      await cacheService.invalidateTags(CACHE.USER.TAGS.LIST());
     }
 
     return user;

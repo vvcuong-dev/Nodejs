@@ -17,7 +17,13 @@ export const CACHE = {
   USER: {
     _VER: "v1",
     _KEY: {
-      LIST: () => `${PREFIX}:${GLOBAL_VER}:users:${CACHE.USER._VER}:list`,
+      LIST: (limit: number, page: number, hashFilters: string) => {
+        let key = `${PREFIX}:${GLOBAL_VER}:users:${CACHE.USER._VER}:list:limit_${limit}_page_${page}`;
+        if (hashFilters) {
+          key += `_hash_${hashFilters}`;
+        }
+        return key;
+      },
       DETAIL: (id: number) =>
         `${PREFIX}:${GLOBAL_VER}:users:${CACHE.USER._VER}:detail:id_${id}`,
     },
@@ -30,7 +36,13 @@ export const CACHE = {
   PRODUCT: {
     _VER: "v1",
     _KEY: {
-      LIST: () => `${PREFIX}:${GLOBAL_VER}:products:${CACHE.PRODUCT._VER}:list`,
+      LIST: (limit: number, page: number, hashFilters: string) => {
+        let key = `${PREFIX}:${GLOBAL_VER}:products:${CACHE.PRODUCT._VER}:list:limit_${limit}_page_${page}`;
+        if (hashFilters) {
+          key += `_hash_${hashFilters}`;
+        }
+        return key;
+      },
       DETAIL: (id: number) =>
         `${PREFIX}:${GLOBAL_VER}:products:${CACHE.PRODUCT._VER}:detail:id_${id}`,
     },
