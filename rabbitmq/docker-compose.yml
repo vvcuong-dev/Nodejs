@@ -1,0 +1,24 @@
+services:
+  rabbitmq:
+    image: rabbitmq:latest
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15673:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: cuongvu
+      RABBITMQ_DEFAULT_PASS: cuongvu
+    configs:
+      - source: rabbitmq-plugins
+        target: /etc/rabbitmq/enabled_plugins
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq/
+configs:
+  rabbitmq-plugins:
+    content: "[rabbitmq_management]."
+volumes:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local
