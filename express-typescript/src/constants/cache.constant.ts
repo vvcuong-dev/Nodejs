@@ -79,5 +79,5 @@ export const CACHE = {
  * 3. Không để cache hết hạn cùng lúc
  *   - Nếu có nhiều key cache hết hạn cùng thì sẽ ảnh hưởng đến hiệu năng của hệ thống, vì khi cache hết hạn, hệ thống sẽ phải truy vấn lại dữ liệu từ database
  *
- * const jitter = Math.flor(Math.random() * 3600); --> 0 - 5 phút
+ * const jitter = Math.floor(Math.random() * 3600); --> 0 - 5 phút
  */

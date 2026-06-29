@@ -54,13 +54,30 @@ export const userService = {
     return user;
   },
   updateUser: async (data: { name: string; email: string }, id: number) => {
-    const user = await prisma.user.update({
-      where: { id },
-      data: {
-        name: data.name,
-        email: data.email,
+    // const user = await prisma.user.update({
+    //   where: { id },
+    //   data: {
+    //     name: data.name,
+    //     email: data.email,
+    //   },
+    // });
+
+    // if (user) {
+    //   await cacheService.invalidateTags(CACHE.USER.TAGS.DETAIL(id.toString()));
+    //   await cacheService.invalidateTags(CACHE.USER.TAGS.LIST());
+    // }
+
+    // return user;
+
+    const user = await cacheService.writeThrought(
+      CACHE.USER._KEY.DETAIL(id),
+      async () => {
+        return prisma.user.update({
+          where: { id },
+          data: data,
+        });
       },
-    });
+    );
 
     if (user) {
       await cacheService.invalidateTags(CACHE.USER.TAGS.DETAIL(id.toString()));

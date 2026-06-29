@@ -123,6 +123,21 @@ export const cacheService = {
       await redis.unlink(Array.from(allKeystoDelete) as string[]); // unlink: xóa nhiều key cùng lúc, không chặn event loop
     }
   },
+  async writeThrought<T>(
+    key: string,
+    DbAction: () => Promise<T>,
+    ttl: number = 3600,
+  ) {
+    // gọi hàm DbAction để lấy dữ liệu mới nhất từ DB
+    const result = await DbAction();
+
+    // Update cache với dữ liệu mới nhất
+    await redis.set(key, JSON.stringify(result), {
+      EX: ttl,
+    });
+
+    return result;
+  },
 };
 
 // ['user', 1]
