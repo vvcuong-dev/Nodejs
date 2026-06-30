@@ -69,18 +69,19 @@ export const HomeController = {
     });
   },
   testQueue: async (req: Request, res: Response) => {
-    // Producer sẽ gửi message vào queue "order-queue"
-
     // 1. assertQueue(tên queue): tạo queue nếu chưa tồn tại
     // 2. sendToQueue(tên queue, message): gửi message vào queue
+    const channelWrapper = rabbitmq.createChannel("Task Channel", (channel) => {
+      return channel.assertQueue("task-queue", { durable: true });
+    });
 
-    await rabbitmq.channel?.assertQueue("task-queue", { durable: true });
-    // durable: true => queue sẽ tồn tại ngay cả khi RabbitMQ server restart nghĩa là message sẽ được lưu lại trong queue và không bị mất đi
-    await rabbitmq.channel?.sendToQueue(
-      "task-queue",
-      Buffer.from("Hello from RabbitMQ!"),
-      { persistent: true }, // persistent: true => message sẽ được lưu lại trong queue và không bị mất đi khi RabbitMQ server restart
-    );
+    if (channelWrapper) {
+      channelWrapper.sendToQueue(
+        "task-queue",
+        Buffer.from("Hello from RabbitMQ Queue!"),
+        { persistent: true },
+      );
+    }
 
     res.json({
       message: "Queue test route",
