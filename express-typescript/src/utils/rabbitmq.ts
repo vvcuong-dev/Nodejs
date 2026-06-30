@@ -11,10 +11,10 @@ export const rabbitmqClient: RabbitMQClient = {
   connection: null,
   channel: null,
   getInstance() {
-    const url = `amqp://${rabbitConfig.username}:${rabbitConfig.password}@${rabbitConfig.host}:${rabbitConfig.port}/`;
+    const url = `amqp://${rabbitConfig.username}:${rabbitConfig.password}@${rabbitConfig.host}:${rabbitConfig.port}`;
     if (!this.connection) {
       this.connection = amqp.connect(url).then(async (conn) => {
-        if (!this.connection) {
+        if (conn) {
           this.channel = await conn.createChannel();
         }
 

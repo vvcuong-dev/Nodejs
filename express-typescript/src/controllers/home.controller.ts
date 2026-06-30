@@ -2,11 +2,13 @@ import { Request, Response } from "express";
 import { CreateOrder } from "../mail/create-order.mail";
 import { MailData } from "../types/mail.type";
 import { pubSubRedis } from "../utils/redis";
+import { rabbitmqClient } from "../utils/rabbitmq";
 
 // import { redisClient } from "../utils/redis";
 // const redis = redisClient.getInstance();
 
 const pubSubClient = pubSubRedis.getInstance();
+const rabbitmq = rabbitmqClient.getInstance();
 
 export const HomeController = {
   index: async (req: Request, res: Response) => {
@@ -64,6 +66,24 @@ export const HomeController = {
 
     res.json({
       message: "Redis test route",
+    });
+  },
+  testQueue: async (req: Request, res: Response) => {
+    // Producer sẽ gửi message vào queue "order-queue"
+
+    // 1. assertQueue(tên queue): tạo queue nếu chưa tồn tại
+    // 2. sendToQueue(tên queue, message): gửi message vào queue
+
+    await rabbitmq.channel?.assertQueue("task-queue", { durable: true });
+    // durable: true => queue sẽ tồn tại ngay cả khi RabbitMQ server restart nghĩa là message sẽ được lưu lại trong queue và không bị mất đi
+    await rabbitmq.channel?.sendToQueue(
+      "task-queue",
+      Buffer.from("Hello from RabbitMQ!"),
+      { persistent: true }, // persistent: true => message sẽ được lưu lại trong queue và không bị mất đi khi RabbitMQ server restart
+    );
+
+    res.json({
+      message: "Queue test route",
     });
   },
 };

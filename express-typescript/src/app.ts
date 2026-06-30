@@ -2,6 +2,7 @@ import "dotenv/config";
 import express, { Application } from "express";
 import path from "path";
 import expressLayouts from "express-ejs-layouts";
+import "./consumers/task.consumer";
 import routerWeb from "./routes/web.route";
 import "./schedulers";
 import "./subscribers/order.subscribe";
