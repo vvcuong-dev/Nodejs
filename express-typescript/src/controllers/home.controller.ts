@@ -78,8 +78,8 @@ export const HomeController = {
 
     const channelWrapper = rabbitmq.getOrCreateChannel(
       "TASK_PRODUCER",
-      (channel: ConfirmChannel) => {
-        return channel.assertQueue("task-queue", { durable: true });
+      async (channel: ConfirmChannel) => {
+        await channel.assertQueue("task-queue", { durable: true });
       },
     );
 

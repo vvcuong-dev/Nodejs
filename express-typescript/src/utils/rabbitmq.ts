@@ -1,4 +1,4 @@
-import { ConfirmChannel, Replies } from "amqplib";
+import { ConfirmChannel } from "amqplib";
 import { rabbitConfig } from "../configs/rabbit.config";
 import amqp, {
   AmqpConnectionManager,
@@ -11,7 +11,7 @@ type RabbitMQClient = {
   channels: Map<string, ChannelWrapper>;
   getOrCreateChannel: (
     name: string,
-    setup: (channel: ConfirmChannel) => Promise<Replies.AssertQueue>,
+    setup: (channel: ConfirmChannel) => Promise<void>,
   ) => ChannelWrapper | undefined;
 };
 
