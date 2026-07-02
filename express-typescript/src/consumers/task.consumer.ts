@@ -10,14 +10,29 @@ const channelWrapper = rabbitmq.getOrCreateChannel(
   },
 );
 
+let count = 0;
 const taskConsumer = async () => {
   channelWrapper?.consume("task-queue", (msg) => {
     if (msg) {
-      const task = msg.content.toString();
-      console.log("Đã nhận message task:", task);
+      const { value } = JSON.parse(msg.content.toString());
+      console.log("Đã nhận message task:", value);
       setTimeout(() => {
-        channelWrapper?.ack(msg); // Xác nhận đã xử lý xong message
-        console.log("Đã hoàn thành task:", task);
+        if (value !== "admin@gmail.com") {
+          channelWrapper?.ack(msg); // Xác nhận đã xử lý xong message
+          console.log("Đã hoàn thành task:", value);
+        } else {
+          if (count < 1) {
+            channelWrapper?.nack(msg, false, true); // Xác nhận không xử lý xong message và yêu cầu gửi lại message
+            console.log(
+              "Xử lý message task thất bại, yêu cầu gửi lại vào queue:",
+              value,
+            );
+          } else {
+            channelWrapper?.nack(msg, false, false); // Xác nhận không xử lý xong message và không yêu cầu gửi lại message
+            console.log("Đã từ chối message task:", value);
+          }
+          count++;
+        }
       }, 2000); // Giả lập thời gian xử lý task là 1 giây
     }
     // nghĩa là xác nhận đã nhận được message và xử lý xong, nếu không ack thì message sẽ bị giữ lại

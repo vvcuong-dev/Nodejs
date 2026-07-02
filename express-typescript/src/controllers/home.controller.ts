@@ -74,6 +74,8 @@ export const HomeController = {
     // 1. assertQueue(tên queue): tạo queue nếu chưa tồn tại
     // 2. sendToQueue(tên queue, message): gửi message vào queue
 
+    const value = req.query.value;
+
     const channelWrapper = rabbitmq.getOrCreateChannel(
       "TASK_PRODUCER",
       (channel: ConfirmChannel) => {
@@ -82,10 +84,16 @@ export const HomeController = {
     );
 
     if (channelWrapper) {
-      const message = `Hello from RabbitMQ Queue! i'm a task message: ${Math.random()}`;
-      channelWrapper.sendToQueue("task-queue", Buffer.from(message), {
-        persistent: true,
-      });
+      const message = {
+        value,
+      };
+      channelWrapper.sendToQueue(
+        "task-queue",
+        Buffer.from(JSON.stringify(message)),
+        {
+          persistent: true,
+        },
+      );
       console.log("Đã gửi message task:", message);
     }
 
