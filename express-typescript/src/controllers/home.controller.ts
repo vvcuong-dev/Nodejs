@@ -69,11 +69,16 @@ export const HomeController = {
     });
   },
   testQueue: async (req: Request, res: Response) => {
+    // Producer
     // 1. assertQueue(tên queue): tạo queue nếu chưa tồn tại
     // 2. sendToQueue(tên queue, message): gửi message vào queue
-    const channelWrapper = rabbitmq.createChannel("Task Channel", (channel) => {
-      return channel.assertQueue("task-queue", { durable: true });
-    });
+
+    const channelWrapper = rabbitmq.getOrCreateChannel(
+      "Producer Task Channel",
+      (channel) => {
+        return channel.assertQueue("task-queue", { durable: true });
+      },
+    );
 
     if (channelWrapper) {
       channelWrapper.sendToQueue(

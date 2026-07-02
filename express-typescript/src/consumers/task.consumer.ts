@@ -1,9 +1,12 @@
 import { rabbitmqClient } from "../utils/rabbitmq";
 const rabbitmq = rabbitmqClient.getInstance();
 
-const channelWrapper = rabbitmq.createChannel("Task Channel", (channel) => {
-  return channel.assertQueue("task-queue", { durable: true });
-});
+const channelWrapper = rabbitmq.getOrCreateChannel(
+  "Task Channel",
+  (channel) => {
+    return channel.assertQueue("Worker Task Channel", { durable: true });
+  },
+);
 
 const taskConsumer = async () => {
   channelWrapper?.consume("task-queue", (msg) => {
@@ -16,6 +19,14 @@ const taskConsumer = async () => {
     // trong queue và sẽ được gửi lại cho consumer khác hoặc chính consumer này nếu nó vẫn còn sống
   });
 };
+
+channelWrapper?.on("connect", () => {
+  console.log("Connected to RabbitMQ channel hehe", channelWrapper?.name);
+});
+
+channelWrapper?.on("error", (err) => {
+  console.error("RabbitMQ channel error:", err);
+});
 
 taskConsumer().catch((error) => {
   console.error("Error in task consumer:", error);

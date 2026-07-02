@@ -8,7 +8,8 @@ import amqp, {
 type RabbitMQClient = {
   getInstance: () => RabbitMQClient;
   connection: AmqpConnectionManager | null;
-  createChannel: (
+  channels: Map<string, ChannelWrapper>;
+  getOrCreateChannel: (
     name: string,
     setup: (channel: ConfirmChannel) => Promise<Replies.AssertQueue>,
   ) => ChannelWrapper | undefined;
@@ -16,6 +17,7 @@ type RabbitMQClient = {
 
 export const rabbitmqClient: RabbitMQClient = {
   connection: null,
+  channels: new Map(),
   getInstance() {
     const url = `amqp://${rabbitConfig.username}:${rabbitConfig.password}@${rabbitConfig.host}:${rabbitConfig.port}`;
 
@@ -29,14 +31,24 @@ export const rabbitmqClient: RabbitMQClient = {
         console.error("Disconnected from RabbitMQ");
       });
     }
-
     return this;
   },
 
-  createChannel(name, setup) {
-    return this.connection?.createChannel({
+  getOrCreateChannel(name, setup) {
+    if (this.channels.has(name)) {
+      // channels.has(name) kiểm tra xem channel đã tồn tại chưa? nếu có trả về true, nếu chưa có trả về false
+      return this.channels.get(name);
+    }
+
+    const channelWrapper = this.connection?.createChannel({
       name,
       setup,
     });
+
+    if (channelWrapper) {
+      this.channels.set(name, channelWrapper);
+    }
+
+    return channelWrapper;
   },
 };
