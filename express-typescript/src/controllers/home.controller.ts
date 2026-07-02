@@ -3,6 +3,7 @@ import { CreateOrder } from "../mail/create-order.mail";
 import { MailData } from "../types/mail.type";
 import { pubSubRedis } from "../utils/redis";
 import { rabbitmqClient } from "../utils/rabbitmq";
+import { ConfirmChannel } from "amqplib";
 
 // import { redisClient } from "../utils/redis";
 // const redis = redisClient.getInstance();
@@ -74,18 +75,18 @@ export const HomeController = {
     // 2. sendToQueue(tên queue, message): gửi message vào queue
 
     const channelWrapper = rabbitmq.getOrCreateChannel(
-      "Producer Task Channel",
-      (channel) => {
+      "TASK_PRODUCER",
+      (channel: ConfirmChannel) => {
         return channel.assertQueue("task-queue", { durable: true });
       },
     );
 
     if (channelWrapper) {
-      channelWrapper.sendToQueue(
-        "task-queue",
-        Buffer.from("Hello from RabbitMQ Queue!"),
-        { persistent: true },
-      );
+      const message = `Hello from RabbitMQ Queue! i'm a task message: ${Math.random()}`;
+      channelWrapper.sendToQueue("task-queue", Buffer.from(message), {
+        persistent: true,
+      });
+      console.log("Đã gửi message task:", message);
     }
 
     res.json({
