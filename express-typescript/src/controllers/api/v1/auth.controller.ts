@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { apiAuthService } from "../../../services/api/auth.service";
+import { errorResponse, successResponse } from "../../../utils/response";
 
 export const apiAuthController = {
   login: async (req: Request, res: Response) => {
@@ -8,48 +9,38 @@ export const apiAuthController = {
     const token = await apiAuthService.login({ email, password });
 
     if (!token) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid email or password" });
+      return errorResponse(res, "Invalid email or password", 401);
     }
 
-    res.json({ success: true, message: "Login successful", token });
+    return successResponse(res, token, "Login successful", 200);
   },
-  profile: (req: Request, res: Response) => {
-    const user = req.user;
+  profile: async (req: Request, res: Response) => {
+    const user = await apiAuthService.getProfile(req.token as string);
 
-    res.json({
-      success: true,
-      message: "Profile retrieved successfully",
-      user: user,
-    });
+    if (!user) {
+      return errorResponse(res, "User not found", 404);
+    }
+
+    return successResponse(res, user, "Profile retrieved successfully", 200);
   },
   logout: async (req: Request, res: Response) => {
     await apiAuthService.logout(req.token as string, req.user?.id as number);
 
-    res.json({ success: true, message: "Logout successful" });
+    return successResponse(res, null, "Logout successful", 200);
   },
   refreshToken: async (req: Request, res: Response) => {
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Refresh token is required" });
+      return errorResponse(res, "Refresh token is required", 400);
     }
 
     const newToken = await apiAuthService.refreshToken(refreshToken);
 
     if (!newToken) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid refresh token" });
+      return errorResponse(res, "Invalid refresh token", 401);
     }
 
-    res.json({
-      success: true,
-      message: "Token refreshed successfully",
-      token: newToken,
-    });
+    return successResponse(res, newToken, "Token refreshed successfully", 200);
   },
 };

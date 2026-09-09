@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { apiAuthService } from "../services/api/auth.service";
+import { errorResponse } from "../utils/response";
 
 export const authMiddleware = async (
   req: Request,
@@ -18,7 +19,7 @@ export const authMiddleware = async (
   const user = await apiAuthService.getProfile(token as string);
 
   if (!user) {
-    return res.status(401).json({ success: false, message: "Unauthorized" });
+    return errorResponse(res, "Invalid credentials or missing token", {}, 401);
   }
 
   req.user = user;

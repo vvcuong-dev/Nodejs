@@ -1,8 +1,8 @@
 import { Request } from "express";
 import { prisma } from "../libs/prisma";
 import { hashPassword } from "../utils/hash";
-import { cacheService } from "./cache.service";
-import { CACHE } from "../constants/cache.constant";
+// import { cacheService } from "./cache.service";
+// import { CACHE } from "../constants/cache.constant";
 import {
   UserCreateInput,
   UserUpdateInput,

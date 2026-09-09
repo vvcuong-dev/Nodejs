@@ -5,6 +5,7 @@ import { errorResponse, successResponse } from "../../../utils/response";
 export const apiUserController = {
   index: async (req: Request, res: Response) => {
     const data = await userService.getUsers(req);
+    // res.set("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
 
     if (data) {
       const { users, count, page } = data;

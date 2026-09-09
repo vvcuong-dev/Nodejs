@@ -6,6 +6,7 @@ import routerWeb from "./routes/web.route";
 import "./schedulers";
 import "./subscribers/order.subscribe";
 // import "./consumers/index.consumer";
+import cors, { CorsOptions } from "cors";
 import {
   errorHandlerLingMiddleware,
   notFoundMiddleware,
@@ -44,6 +45,26 @@ app.use(
 );
 
 app.use(flash());
+
+// Cors
+const frontEndOrigin = ["http://127.0.0.1:5500", "http://localhost:5500"];
+
+const corsOptions = {
+  origin: (
+    origin: string,
+    callback: (err: Error | null, origin?: boolean) => void,
+  ) => {
+    if (frontEndOrigin.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  optionsSuccessStatus: 200,
+  credentials: true,
+} as CorsOptions;
+
+app.use(cors(corsOptions));
 
 // Routes
 app.use(routerWeb);

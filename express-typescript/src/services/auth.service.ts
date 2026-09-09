@@ -50,7 +50,14 @@ export const authService = {
       where: {
         id: userId,
       },
+      omit: {
+        password: true,
+      },
     });
+
+    if (!user) {
+      return false;
+    }
 
     return user;
   },
