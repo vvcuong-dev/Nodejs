@@ -111,3 +111,66 @@ Mục đích: cho phép lập lịch các công việc hoặc tin nhắn để �
 - Ví dụ: Trong BullMQ, bạn có thể tạo các công việc theo lịch trình (cron jobs) với các tùy chọn như cron expressions để xác định lịch trình chạy.
 
 Tóm gọn: Cronjob = "tôi sẽ xử lý job này vào lúc X hoặc theo lịch trình Y (theo cron), nếu lỗi thì thử lại theo retry config"
+
+## Rate Limit
+
+Kỹ thuật giới hạn số lần request trong 1 đơn vị thời gian nhất định
+
+Ví dụ:
+
+- mỗi người dùng chúng ta chỉ cho phép gửi 100 request/s. Nếu vượt quá thì sẽ trả về response lỗi.
+- mỗi người dùng chỉ cho phép nhập sai thẻ credit 3 lần trong 1 ngày
+- mỗi địa chỉ IP chỉ có thể tạo được 2 account trong 1 ngày
+
+Tác dụng của Rate Limit:
+
+- hạn chế tấn công DOS (Denial of Service) đến hệ thống
+- hạn chế brute force password (thử nhiều lần để đoán password)
+- Hạn chế brute force thông tin thẻ credit card (thử nhiều lần để đoán số thẻ, ngày hết hạn, CVV)
+- bảo mật: không cho phép nhập sai password quá nhiều lần
+- Doanh thu: với mỗi plan sẽ có rate limit khác nhau. Nếu muốn dùng nhiều hơn thì cần mua lên plan đắt tiền hơn
+
+Cách triển khai Rate Limit:
+
+- Rate limit theo cái gì?
+  - IP --> Thường áp dụng cho các API public, không cần login
+  - User --> Các API Private (xác thực email và password) --> dựa vào userId
+  - API Key --> API Private (Xác thực bằng API Key) --> dựa vào apiKey
+
+- Lưu trữ số lượng Request ở đâu?
+  - Database
+  - Redis (thường dùng nhất vì tốc độ nhanh, có thể set expire)
+  - File (không nên dùng vì tốc độ chậm, không thể set expire, không thể scale ra nhiều server)
+
+- Xây dựng logic:
+  - Xác định số lượng Request
+  - Đơn vị thời gian (1 giây, 1 phút, 1 giờ, 1 ngày)
+  - Ví dụ: theo địa chỉ IP, mỗi IP chỉ được phép gửi 100 request trong 1 phút. Nếu vượt quá thì trả về lỗi 429 Too Many Requests
+
+  - Khi có Request, thực hiện các thao tác sau:
+    - Lấy địa chỉ IP của người dùng
+    - Lấy số lượng request cũ với địa địa IP vừa lấy được, nếu chưa có trong kho lưu trữ -> khởi tạo giá trị 0 và thời gian gửi request đầu tiên
+    - Tăng số lượng request lên 1
+    - Cập nhật vào kho lưu trữ (có thể set expire để tự động reset sau 1 phút)
+
+  - Trong middleware kiểm tra
+    - Lấy được số lượng request của địa chỉ IP đang gửi Request
+    - Nếu vượt quá giá trị cho phép --> kiểm tra thời gian hiện tại --> so sánh với thời gian gửi request đầu tiên
+      - Nếu chưa hết 1 phút --> trả về lỗi 429 Too Many Requests
+      - Nếu đã hết 1 phút --> reset số lượng request về 0 và cập nhật thời gian gửi request đầu tiên là thời gian hiện tại
+
+    Xây dựng Database
+
+    Table rate_limit
+    - id: uuid
+    - ip_address: string
+    - request_number: number
+    - start_time: timestamp
+    - created_at: timestamp
+    - updated_at: timestamp
+
+    Table request_log
+    - id: uuid
+    - ip_address: string
+    - created_at: timestamp
+    - updated_at: timestamp
